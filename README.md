@@ -401,6 +401,26 @@ let outside = !set;
 
 We welcome all contributions including bug reports, feature suggestions, documentation fixes, and test additions.
 
+### Development Procedure
+
+1. Fork this repository.
+1. Clone the forked repository.
+1. Create a working branch locally.  
+   - Branch name format: `<type>/<short-description>(-<issue-number>)` (include the issue number if one exists)  
+   - Types:  
+     - `feat` → New feature  
+     - `fix` → Bug fix  
+     - `docs` → Documentation update  
+     - `refactor` → Code refactoring  
+     - `chore` → Miscellaneous tasks (e.g., CI configuration, dependency updates)  
+   - Example: `feat/add-user-login-123`
+1. Develop and commit.  
+   - Commit message: a short, descriptive summary
+1. Push to GitHub.
+1. Create a Pull Request.  
+   - Title format: `[type] #<issue-number> short description` (include the issue number if one exists)  
+
+
 ## 🧪 Testing Philosophy
 
 This library prioritizes accuracy as its primary goal. Therefore, we maintain a comprehensive testing strategy:
