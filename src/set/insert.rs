@@ -208,7 +208,7 @@ impl SpaceTimeIdSet {
                 other.x(),
                 other.y(),
                 gcd,
-                DimensionRange::LimitRange(start / gcd, end / gcd),
+                DimensionRange::LimitRange(start / gcd, end / gcd - 1),
             )
             .unwrap();
         }

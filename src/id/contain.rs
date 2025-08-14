@@ -36,6 +36,11 @@ impl SpaceTimeId {
         let target_z = self.z.max(other.z);
         let target_i = self.i.min(other.i);
 
+        println!("target_z{}", target_z);
+        println!("target_i{}", target_i);
+
+        println!("self{}", &self);
+
         let self_scaled = self
             .change_scale(Some(target_z), Some(target_i))
             .expect("Failed to scale self");

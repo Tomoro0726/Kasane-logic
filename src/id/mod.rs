@@ -321,6 +321,8 @@ impl SpaceTimeId {
                             "t dimension range is invalid: start {} > end {}.",
                             start, end
                         ));
+                    } else if start == end {
+                        return Ok(DimensionRange::Single(start));
                     }
                     Ok(DimensionRange::LimitRange(start, end))
                 }
