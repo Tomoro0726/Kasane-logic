@@ -13,7 +13,7 @@ fn main() {
         LimitRange(3, 4),
         LimitRange(3, 4),
         3,
-        LimitRange(0, 30),
+        LimitRange(0, 3),
     )
     .unwrap();
 

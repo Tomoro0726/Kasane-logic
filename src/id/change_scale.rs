@@ -76,19 +76,39 @@ impl SpaceTimeId {
             None => self.z,
         };
 
+        println!("self{}", self.i);
+
         let i = match i {
             Some(other_i) => {
                 if self.i == !0 && other_i == 0 {
                     //時空間IDを空間IDに変換しようとしている場合
-                    Err("時空間IDを空間IDに変換することはできないよ".to_string());
+                    return Err("時空間IDを空間IDに変換することはできないよ".to_string());
                 } else if self.i == 0 && other_i == !0 {
                     //空間IDを時空間IDに変換しようとしている場合
+
                     t = DimensionRange::Any;
                     other_i
                 } else if self.i == !0 && other_i == !0 {
                     //時空間IDを時空間IDに変換しようとしている場合
+                    //この時、other_iが元のiよりも大きい場合にはエラーを出す
+
+                    if self.i < other_i {
+                        return Err("自分より大きな粒度に変換はできないよ".to_string());
+                    };
+                    if self.i == other_i {
+                        other_i
+                    } else {
+                        //そうでないときは変換がはじめてできる。
+                        let gcd = Self::gcd(other_i, self.i);
+                        let t_coef = self.i / gcd;
+                        t = Self::change_scale_logic(&self.t, &t_coef)?;
+
+                        other_i
+                    }
                 } else {
                     //空間IDを空間IDに変換しようとしている場合
+                    println!("時空間ID");
+
                     t = DimensionRange::Any;
                     other_i
                 }
