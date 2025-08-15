@@ -76,19 +76,17 @@ impl SpaceTimeId {
             None => self.z,
         };
 
-        println!("self{}", self.i);
-
         let i = match i {
             Some(other_i) => {
-                if self.i == !0 && other_i == 0 {
+                if self.i != 0 && other_i == 0 {
                     //時空間IDを空間IDに変換しようとしている場合
                     return Err("時空間IDを空間IDに変換することはできないよ".to_string());
-                } else if self.i == 0 && other_i == !0 {
+                } else if self.i == 0 && other_i != 0 {
                     //空間IDを時空間IDに変換しようとしている場合
 
                     t = DimensionRange::Any;
                     other_i
-                } else if self.i == !0 && other_i == !0 {
+                } else if self.i != 0 && other_i != 0 {
                     //時空間IDを時空間IDに変換しようとしている場合
                     //この時、other_iが元のiよりも大きい場合にはエラーを出す
 
@@ -107,8 +105,6 @@ impl SpaceTimeId {
                     }
                 } else {
                     //空間IDを空間IDに変換しようとしている場合
-                    println!("時空間ID");
-
                     t = DimensionRange::Any;
                     other_i
                 }

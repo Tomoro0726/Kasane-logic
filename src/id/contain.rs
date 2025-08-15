@@ -33,13 +33,24 @@ impl SpaceTimeId {
     /// - `Err(String)` if scaling to a common resolution fails (e.g., due to invalid parameters).
     ///
     pub fn containment_relation(&self, &other: &SpaceTimeId) -> Containment {
-        let target_z = self.z.max(other.z);
-        let target_i = self.i.min(other.i);
+        let target_z;
+        let target_i;
 
-        println!("target_z{}", target_z);
-        println!("target_i{}", target_i);
-
-        println!("self{}", &self);
+        if self.i == 0 && other.i == 0 {
+            //空間IDと空間ID
+            target_z = self.z.max(other.z);
+            target_i = self.i.min(other.i);
+        } else if self.i != 0 && other.i != 0 {
+            //時空間IDと時空間ID
+            //現状のアルゴリズムで問題なく動作
+            target_z = self.z.max(other.z);
+            target_i = self.i.min(other.i);
+        } else {
+            //時空間IDと空間ID
+            //空間ID側を時空間IDに変換
+            target_z = self.z.max(other.z);
+            target_i = self.i.max(other.i);
+        }
 
         let self_scaled = self
             .change_scale(Some(target_z), Some(target_i))
