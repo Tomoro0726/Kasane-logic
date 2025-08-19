@@ -32,7 +32,7 @@ impl SpaceTimeId {
     /// - `Ok(Containment::None)` if they do not overlap at all.
     /// - `Err(String)` if scaling to a common resolution fails (e.g., due to invalid parameters).
     ///
-    pub fn containment_relation(&self, &other: &SpaceTimeId) -> Containment {
+    pub fn relation(&self, &other: &SpaceTimeId) -> Containment {
         let target_z;
         let target_i;
 

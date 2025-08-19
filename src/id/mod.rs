@@ -1,10 +1,11 @@
+pub mod center;
 pub mod change_scale;
 pub mod complement;
-pub mod contain;
 pub mod coordinates;
-pub mod points;
+pub mod relation;
 pub mod to_pure;
 pub mod value;
+pub mod vertex;
 
 /// Represents a value for a single dimension (F, X, Y, or T) in a SpaceTimeId.
 ///
