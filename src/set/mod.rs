@@ -4,6 +4,7 @@ pub mod equal;
 pub mod insert;
 pub mod not;
 pub mod or;
+pub mod to_pure;
 pub mod xor;
 
 #[derive(Clone)]
@@ -57,67 +58,16 @@ impl fmt::Display for SpaceTimeIdSet {
         write!(f, "{}", elements.join(", "))
     }
 }
-
 impl fmt::Debug for SpaceTimeIdSet {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut list = f.debug_list();
-
-        for stid in &self.inner {
-            let z = stid.z();
-            let i = stid.i();
-            let max_xy = (1u64 << z) - 1;
-            let max_f = (1i64 << z) - 1;
-            let min_f = -(1i64 << z) - 1;
-            let max_t = u32::MAX;
-
-            let x_vals = match stid.x() {
-                DimensionRange::Single(v) => vec![v],
-                DimensionRange::LimitRange(s, e) => (s..=e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (0..=e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (s..=max_xy).collect(),
-                DimensionRange::Any => (0..=max_xy).collect(),
-            };
-
-            let y_vals = match stid.y() {
-                DimensionRange::Single(v) => vec![v],
-                DimensionRange::LimitRange(s, e) => (s..=e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (0..=e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (s..=max_xy).collect(),
-                DimensionRange::Any => (0..=max_xy).collect(),
-            };
-
-            let f_vals = match stid.f() {
-                DimensionRange::Single(v) => vec![v],
-                DimensionRange::LimitRange(s, e) => (s..=e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (min_f..=e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (s..=max_f).collect(),
-                DimensionRange::Any => (min_f..=max_f).collect(),
-            };
-
-            let t_vals = match stid.t() {
-                DimensionRange::Single(v) => vec![v],
-                DimensionRange::LimitRange(s, e) => (s..=e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (0..=e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (s..=max_t).collect(),
-                DimensionRange::Any => vec![0], // 無限ループ回避のため、必要なら max_t を含めても良い
-            };
-
-            for &x in &x_vals {
-                for &y in &y_vals {
-                    for &f in &f_vals {
-                        for &t in &t_vals {
-                            if i == 0 {
-                                list.entry(&format_args!("{}/{}/{}/{}", z, f, x, y));
-                            } else {
-                                list.entry(&format_args!("{}/{}/{}/{}_{}/{}", z, x, y, f, i, t));
-                            }
-                        }
-                    }
-                }
+        write!(f, "[ ")?;
+        for (i, stid) in self.inner.iter().enumerate() {
+            if i > 0 {
+                write!(f, ", ")?;
             }
+            write!(f, "{:?}", stid)?;
         }
-
-        list.finish()
+        write!(f, " ]")
     }
 }
 
