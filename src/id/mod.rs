@@ -106,33 +106,34 @@ impl fmt::Display for SpaceTimeId {
 }
 
 impl SpaceTimeId {
-    /// Creates a new SpaceTimeId after validating its components based on the spatial ID guidelines.
+    /// Creates a new `SpaceTimeId` and normalizes all dimension ranges.
     ///
-    /// This function ensures that all dimensional values are valid for the given zoom level z
-    /// and that all range specifications are coherent.
+    /// # Normalization Rules
     ///
-    /// # Arguments
+    /// Each dimension (`x`, `y`, `f`, `t`) is normalized so that
+    /// redundant or equivalent representations are reduced to a canonical form.
     ///
-    /// * z: The zoom level, a u16 value. It defines the coordinate space boundaries.
-    /// * f: The value for the F (vertical) dimension as a DimensionRange<i64>.
-    /// * x: The value for the X dimension as a DimensionRange<u64>.
-    /// * y: The value for the Y dimension as a DimensionRange<u64>.
-    /// * i: The time interval in seconds, a u32 value.
-    /// * t: The time index value as a DimensionRange<u32>.
+    /// ## XY dimensions
+    /// - `AfterUnLimitRange(0)` → `Any`
+    /// - `AfterUnLimitRange(max)` → `Single(max)`
+    /// - `BeforeUnLimitRange(max)` → `Any`
+    /// - `BeforeUnLimitRange(0)` → `Single(0)`
     ///
-    /// # Returns
+    /// ## F dimension
+    /// - `AfterUnLimitRange(min_f)` → `Any`
+    /// - `AfterUnLimitRange(max_f)` → `Single(max_f)`
+    /// - `BeforeUnLimitRange(max_f)` → `Any`
+    /// - `BeforeUnLimitRange(min_f)` → `Single(min_f)`
     ///
-    /// A Result which is Ok(SpaceTimeId) on successful validation, or Err(String)
-    /// containing a descriptive error message if any validation fails.
+    /// (`min_f = -2^z`, `max_f = 2^z - 1`)
+    ///
+    /// ## T dimension
+    /// - If `i == 0` (purely spatial ID), then `t` must be `Any`  
+    ///   otherwise an error is returned.
     ///
     /// # Errors
-    ///
-    /// This function will return an error if any of the following conditions are met:
-    /// - z is 32 or greater, which would cause an overflow in shift operations.
-    /// - For any LimitRange(start, end), start is greater than end.
-    /// - For x or y dimensions, any value is outside the valid range of [0, 2^z - 1].
-    /// - For the f dimension, any value is outside the valid range of [-2^z, 2^z - 1].
-    /// - The time interval i is 0, but the time index t is not DimensionRange::Any.
+    /// - If any range value is outside its valid bounds for the given zoom `z`
+    /// - If `t` is not `Any` when `i == 0`
     pub fn new(
         z: u16,
         f: DimensionRange<i64>,
@@ -272,6 +273,8 @@ impl SpaceTimeId {
                     if start >= min_f && start <= max_f {
                         if start == min_f {
                             Ok(DimensionRange::Any)
+                        } else if start == max_f {
+                            Ok(DimensionRange::Single(max_f))
                         } else {
                             Ok(DimensionRange::AfterUnLimitRange(start))
                         }
@@ -286,6 +289,8 @@ impl SpaceTimeId {
                     if end >= min_f && end <= max_f {
                         if end == max_f {
                             Ok(DimensionRange::Any)
+                        } else if end == min_f {
+                            Ok(DimensionRange::Single(min_f))
                         } else {
                             Ok(DimensionRange::BeforeUnLimitRange(end))
                         }
@@ -321,14 +326,22 @@ impl SpaceTimeId {
                             "t dimension range is invalid: start {} > end {}.",
                             start, end
                         ));
-                    } else if start == end {
+                    }
+                    if start == end {
                         return Ok(DimensionRange::Single(start));
+                    };
+                    if start == 0 {
+                        return Ok(DimensionRange::BeforeUnLimitRange(end));
                     }
                     Ok(DimensionRange::LimitRange(start, end))
                 }
 
                 DimensionRange::BeforeUnLimitRange(end) => {
-                    Ok(DimensionRange::BeforeUnLimitRange(end))
+                    if end == 0 {
+                        return Ok(DimensionRange::Single(0));
+                    } else {
+                        Ok(DimensionRange::BeforeUnLimitRange(end))
+                    }
                 }
 
                 DimensionRange::AfterUnLimitRange(start) => {
