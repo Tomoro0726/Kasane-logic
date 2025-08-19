@@ -332,7 +332,11 @@ impl SpaceTimeId {
                 }
 
                 DimensionRange::AfterUnLimitRange(start) => {
-                    Ok(DimensionRange::AfterUnLimitRange(start))
+                    if start == 0 {
+                        Ok(DimensionRange::Any)
+                    } else {
+                        Ok(DimensionRange::AfterUnLimitRange(start))
+                    }
                 }
 
                 DimensionRange::Any => Ok(DimensionRange::Any),
