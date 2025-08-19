@@ -8,25 +8,24 @@ use logic::{
 };
 
 fn main() {
-    let id1 = SpaceTimeId::new(3, LimitRange(3, 4), Any, LimitRange(3, 3), 0, Any).unwrap();
-
-    let mut set1 = SpaceTimeIdSet::from(id1);
-
     let id2 = SpaceTimeId::new(
         3,
         LimitRange(0, 4),
-        LimitRange(1, 4),
+        LimitRange(0, 4),
         LimitRange(3, 4),
-        3,
-        LimitRange(30, 40),
+        0,
+        Any,
     )
     .unwrap();
 
-    set1.insert(id2);
+    for id in id2.to_pure() {
+        print!("{},", id);
+    }
+    println!("-----------");
 
-    println!("{}", id2);
-
-    println!("{}", set1);
+    for id in id2.complement().to_pure() {
+        print!("{},", id);
+    }
 
     // println!("{}", id1);
 }
