@@ -1,6 +1,6 @@
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::relation::Containment::{self, Full, Partial};
+use crate::id::{DimensionRange, SpaceTimeId};
 use crate::set::SpaceTimeIdSet;
 
 impl SpaceTimeIdSet {
@@ -26,7 +26,7 @@ impl SpaceTimeIdSet {
         let mut should_insert = true;
 
         for stid in &self.inner {
-            match stid.containment_relation(&other) {
+            match stid.relation(&other) {
                 Full => {
                     return;
                 }
@@ -153,9 +153,7 @@ impl SpaceTimeIdSet {
                     return None;
                 }
             }
-            BeforeUnLimitRange(e) => {
-                Self::optimal_f_max_z(LimitRange(0, e), z)
-            }
+            BeforeUnLimitRange(e) => Self::optimal_f_max_z(LimitRange(0, e), z),
             AfterUnLimitRange(s) => {
                 let max = 1i64 << z;
                 Self::optimal_f_max_z(LimitRange(s, max), z)
@@ -390,16 +388,12 @@ impl SpaceTimeIdSet {
                         Ok(None)
                     }
                 }
-                AfterUnLimitRange(_) => {
-                    Err("重なりがある値が入力されました".to_string())
-                }
+                AfterUnLimitRange(_) => Err("重なりがある値が入力されました".to_string()),
                 Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },
             BeforeUnLimitRange(_) => match other {
-                BeforeUnLimitRange(_) => {
-                    Err("重なりがある値が入力されました".to_string())
-                }
+                BeforeUnLimitRange(_) => Err("重なりがある値が入力されました".to_string()),
                 Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },

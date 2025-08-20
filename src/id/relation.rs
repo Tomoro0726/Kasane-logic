@@ -1,10 +1,10 @@
 use std::ops::{Add, Mul, Sub};
 
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 
 /// Represents the containment relationship between two `SpaceTimeId` instances.
-/// 
+///
 /// This enum describes how two space-time regions relate to each other in terms of
 /// spatial and temporal overlap.
 #[derive(Debug, PartialEq)]
@@ -42,12 +42,12 @@ impl SpaceTimeId {
     ///
     /// ```rust
     /// use logic::id::{DimensionRange::Single, SpaceTimeId};
-    /// 
+    ///
     /// let stid1 = SpaceTimeId::new(4, Single(5), Single(3), Single(10), 60, Single(100)).unwrap();
     /// let stid2 = SpaceTimeId::new(4, Single(5), Single(3), Single(10), 60, Single(100)).unwrap();
     /// let containment = stid1.containment_relation(&stid2);
     /// ```
-    pub fn containment_relation(&self, other: &SpaceTimeId) -> Containment {
+    pub fn relation(&self, other: &SpaceTimeId) -> Containment {
         let target_z;
         let target_i;
 
@@ -194,9 +194,7 @@ impl SpaceTimeId {
                 _ => Self::same_level_dimension_intersection(b, a),
             },
             AfterUnLimitRange(a_v_s) => match b {
-                AfterUnLimitRange(b_v_s) => Some(
-                    AfterUnLimitRange(std::cmp::max(a_v_s, b_v_s)),
-                ),
+                AfterUnLimitRange(b_v_s) => Some(AfterUnLimitRange(std::cmp::max(a_v_s, b_v_s))),
                 BeforeUnLimitRange(b_v_e) => {
                     if a_v_s <= b_v_e {
                         Some(LimitRange(a_v_s, b_v_e))
