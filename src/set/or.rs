@@ -15,10 +15,10 @@ use crate::set::SpaceTimeIdSet;
 /// ```
 /// use logic::{id::{DimensionRange, SpaceTimeId}, set::SpaceTimeIdSet};
 ///
-/// let stid1 = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-///                              DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
-/// let stid2 = SpaceTimeId::new(4, DimensionRange::Single(6), DimensionRange::Single(4),
-///                              DimensionRange::Single(11), 60, DimensionRange::Single(101)).unwrap();
+/// let stid1 = SpaceTimeId::new(4, Single(5), Single(3),
+///                              Single(10), 60, Single(100)).unwrap();
+/// let stid2 = SpaceTimeId::new(4, Single(6), Single(4),
+///                              Single(11), 60, Single(101)).unwrap();
 /// let set1 = SpaceTimeIdSet::from(stid1);
 /// let set2 = SpaceTimeIdSet::from(stid2);
 /// let union = &set1 | &set2;

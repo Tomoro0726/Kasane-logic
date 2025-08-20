@@ -28,6 +28,8 @@ pub enum DimensionRange<T> {
     /// An Any value, indicating it applies to all possible values in this dimension (e.g., -).
     Any,
 }
+
+use DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use std::fmt;
 
 impl<T> fmt::Display for DimensionRange<T>
@@ -36,11 +38,11 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            DimensionRange::LimitRange(start, end) => write!(f, "{}:{}", start, end),
-            DimensionRange::BeforeUnLimitRange(v) => write!(f, "-:{}", v),
-            DimensionRange::AfterUnLimitRange(v) => write!(f, "{}:-", v),
-            DimensionRange::Single(v) => write!(f, "{}", v),
-            DimensionRange::Any => write!(f, "-"),
+            LimitRange(start, end) => write!(f, "{}:{}", start, end),
+            BeforeUnLimitRange(v) => write!(f, "-:{}", v),
+            AfterUnLimitRange(v) => write!(f, "{}:-", v),
+            Single(v) => write!(f, "{}", v),
+            Any => write!(f, "-"),
         }
     }
 }
@@ -57,10 +59,10 @@ where
 /// The input `DimensionRange` values are normalized during validation inside `SpaceTimeId::new`
 /// according to the following rules:
 ///
-/// ## `DimensionRange::Single`
+/// ## `Single`
 /// - No normalization applied (used as-is).
 ///
-/// ## `DimensionRange::LimitRange(start, end)`
+/// ## `LimitRange(start, end)`
 /// - If `start == end`: converted to `Single(start)`.
 /// - If the range spans the entire valid domain:
 ///   - For x/y: `0..=2^z - 1`
@@ -69,15 +71,15 @@ where
 /// - If `start == 0`: converted to `BeforeUnLimitRange(end)`.
 /// - If `end == max`: converted to `AfterUnLimitRange(start)`.
 ///
-/// ## `DimensionRange::AfterUnLimitRange(start)`
+/// ## `AfterUnLimitRange(start)`
 /// - If `start == 0` (for x/y) or `start == min_f` (for f): converted to `Any`.
 /// - If `start == max` (for x/y only): converted to `Single(max)`.
 ///
-/// ## `DimensionRange::BeforeUnLimitRange(end)`
+/// ## `BeforeUnLimitRange(end)`
 /// - If `end == max` (for x/y) or `end == max_f` (for f): converted to `Any`.
 /// - If `end == 0` (for x/y) or `end == min_f` (for f): converted to `Single(end)`.
 ///
-/// ## `DimensionRange::Any`
+/// ## `Any`
 /// - No normalization applied (used as-is).
 ///
 /// ## Special case for time dimension `t`
@@ -157,9 +159,9 @@ impl SpaceTimeId {
             let max = (1u64 << z) - 1;
 
             match *dim_val {
-                DimensionRange::Single(v) => {
+                Single(v) => {
                     if v <= max {
-                        Ok(DimensionRange::Single(v))
+                        Ok(Single(v))
                     } else {
                         Err(format!(
                             "value {} is out of bounds for zoom level {}. Must be less than {}.",
@@ -167,22 +169,22 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::LimitRange(start, end) => {
+                LimitRange(start, end) => {
                     if start > end {
-                        return validate_xy_dim(&DimensionRange::LimitRange(end, start), z);
+                        return validate_xy_dim(&LimitRange(end, start), z);
                     }
                     if end == start {
-                        return Ok(DimensionRange::Single(start));
+                        return Ok(Single(start));
                     }
                     if end <= max {
                         if start == 0 && end == max {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if start == 0 {
-                            Ok(DimensionRange::BeforeUnLimitRange(end))
+                            Ok(BeforeUnLimitRange(end))
                         } else if end == max {
-                            Ok(DimensionRange::AfterUnLimitRange(start))
+                            Ok(AfterUnLimitRange(start))
                         } else {
-                            Ok(DimensionRange::LimitRange(start, end))
+                            Ok(LimitRange(start, end))
                         }
                     } else {
                         Err(format!(
@@ -191,14 +193,14 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::AfterUnLimitRange(start) => {
+                AfterUnLimitRange(start) => {
                     if start <= max {
                         if start == 0 {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if start == max {
-                            Ok(DimensionRange::Single(max))
+                            Ok(Single(max))
                         } else {
-                            Ok(DimensionRange::AfterUnLimitRange(start))
+                            Ok(AfterUnLimitRange(start))
                         }
                     } else {
                         Err(format!(
@@ -207,14 +209,14 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::BeforeUnLimitRange(end) => {
+                BeforeUnLimitRange(end) => {
                     if end <= max {
                         if end == max {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if end == 0 {
-                            Ok(DimensionRange::Single(0))
+                            Ok(Single(0))
                         } else {
-                            Ok(DimensionRange::BeforeUnLimitRange(end))
+                            Ok(BeforeUnLimitRange(end))
                         }
                     } else {
                         Err(format!(
@@ -223,7 +225,7 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::Any => Ok(DimensionRange::Any),
+                Any => Ok(Any),
             }
         }
 
@@ -236,9 +238,9 @@ impl SpaceTimeId {
             let min_f = -limit;
 
             match *dim_val {
-                DimensionRange::Single(v) => {
+                Single(v) => {
                     if v >= min_f && v <= max_f {
-                        Ok(DimensionRange::Single(v))
+                        Ok(Single(v))
                     } else {
                         Err(format!(
                             "value {} is out of bounds for zoom level {}. Must be between {} and {}.",
@@ -246,22 +248,22 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::LimitRange(start, end) => {
+                LimitRange(start, end) => {
                     if start > end {
-                        return validate_f_dim(&DimensionRange::LimitRange(end, start), z);
+                        return validate_f_dim(&LimitRange(end, start), z);
                     }
                     if end == start {
-                        return Ok(DimensionRange::Single(start));
+                        return Ok(Single(start));
                     }
                     if end <= max_f {
                         if start == min_f && end == max_f {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if start == min_f {
-                            Ok(DimensionRange::BeforeUnLimitRange(end))
+                            Ok(BeforeUnLimitRange(end))
                         } else if end == max_f {
-                            Ok(DimensionRange::AfterUnLimitRange(start))
+                            Ok(AfterUnLimitRange(start))
                         } else {
-                            Ok(DimensionRange::LimitRange(start, end))
+                            Ok(LimitRange(start, end))
                         }
                     } else {
                         Err(format!(
@@ -270,14 +272,14 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::AfterUnLimitRange(start) => {
+                AfterUnLimitRange(start) => {
                     if start >= min_f && start <= max_f {
                         if start == min_f {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if start == max_f {
-                            Ok(DimensionRange::Single(max_f))
+                            Ok(Single(max_f))
                         } else {
-                            Ok(DimensionRange::AfterUnLimitRange(start))
+                            Ok(AfterUnLimitRange(start))
                         }
                     } else {
                         Err(format!(
@@ -286,14 +288,14 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::BeforeUnLimitRange(end) => {
+                BeforeUnLimitRange(end) => {
                     if end >= min_f && end <= max_f {
                         if end == max_f {
-                            Ok(DimensionRange::Any)
+                            Ok(Any)
                         } else if end == min_f {
-                            Ok(DimensionRange::Single(min_f))
+                            Ok(Single(min_f))
                         } else {
-                            Ok(DimensionRange::BeforeUnLimitRange(end))
+                            Ok(BeforeUnLimitRange(end))
                         }
                     } else {
                         Err(format!(
@@ -302,7 +304,7 @@ impl SpaceTimeId {
                         ))
                     }
                 }
-                DimensionRange::Any => Ok(DimensionRange::Any),
+                Any => Ok(Any),
             }
         }
 
@@ -311,46 +313,46 @@ impl SpaceTimeId {
             i: u32,
         ) -> Result<DimensionRange<u32>, String> {
             if i == 0 {
-                if *dim_val != DimensionRange::Any {
+                if *dim_val != Any {
                     return Err("t must be Any when time interval i is 0.".to_string());
                 } else {
-                    return Ok(DimensionRange::Any);
+                    return Ok(Any);
                 }
             }
 
             match *dim_val {
-                DimensionRange::Single(_) => Ok(dim_val.clone()),
+                Single(_) => Ok(dim_val.clone()),
 
-                DimensionRange::LimitRange(start, end) => {
+                LimitRange(start, end) => {
                     if start > end {
-                        return validate_t_dim(&DimensionRange::LimitRange(end, start), i);
+                        return validate_t_dim(&LimitRange(end, start), i);
                     }
                     if start == end {
-                        return Ok(DimensionRange::Single(start));
+                        return Ok(Single(start));
                     };
                     if start == 0 {
-                        return Ok(DimensionRange::BeforeUnLimitRange(end));
+                        return Ok(BeforeUnLimitRange(end));
                     }
-                    Ok(DimensionRange::LimitRange(start, end))
+                    Ok(LimitRange(start, end))
                 }
 
-                DimensionRange::BeforeUnLimitRange(end) => {
+                BeforeUnLimitRange(end) => {
                     if end == 0 {
-                        return Ok(DimensionRange::Single(0));
+                        return Ok(Single(0));
                     } else {
-                        Ok(DimensionRange::BeforeUnLimitRange(end))
+                        Ok(BeforeUnLimitRange(end))
                     }
                 }
 
-                DimensionRange::AfterUnLimitRange(start) => {
+                AfterUnLimitRange(start) => {
                     if start == 0 {
-                        Ok(DimensionRange::Any)
+                        Ok(Any)
                     } else {
-                        Ok(DimensionRange::AfterUnLimitRange(start))
+                        Ok(AfterUnLimitRange(start))
                     }
                 }
 
-                DimensionRange::Any => Ok(DimensionRange::Any),
+                Any => Ok(Any),
             }
         }
 

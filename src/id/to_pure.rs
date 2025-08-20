@@ -1,4 +1,5 @@
 use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
 impl SpaceTimeId {
     /// 拡張記法 (Range, Before, After, Any) をすべて展開して
@@ -14,21 +15,21 @@ impl SpaceTimeId {
 
         let expand_u64 = |range: &DimensionRange<u64>, max: u64| -> Vec<u64> {
             match range {
-                DimensionRange::Single(v) => vec![*v],
-                DimensionRange::LimitRange(s, e) => (*s..=*e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (0..=*e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (*s..=max).collect(),
-                DimensionRange::Any => (0..=max).collect(),
+                Single(v) => vec![*v],
+                LimitRange(s, e) => (*s..=*e).collect(),
+                BeforeUnLimitRange(e) => (0..=*e).collect(),
+                AfterUnLimitRange(s) => (*s..=max).collect(),
+                Any => (0..=max).collect(),
             }
         };
 
         let expand_i64 = |range: &DimensionRange<i64>, min: i64, max: i64| -> Vec<i64> {
             match range {
-                DimensionRange::Single(v) => vec![*v],
-                DimensionRange::LimitRange(s, e) => (*s..=*e).collect(),
-                DimensionRange::BeforeUnLimitRange(e) => (min..=*e).collect(),
-                DimensionRange::AfterUnLimitRange(s) => (*s..=max).collect(),
-                DimensionRange::Any => (min..=max).collect(),
+                Single(v) => vec![*v],
+                LimitRange(s, e) => (*s..=*e).collect(),
+                BeforeUnLimitRange(e) => (min..=*e).collect(),
+                AfterUnLimitRange(s) => (*s..=max).collect(),
+                Any => (min..=max).collect(),
             }
         };
 
@@ -44,9 +45,9 @@ impl SpaceTimeId {
                     result.push(
                         SpaceTimeId::new(
                             z,
-                            DimensionRange::Single(f),
-                            DimensionRange::Single(x),
-                            DimensionRange::Single(y),
+                            Single(f),
+                            Single(x),
+                            Single(y),
                             i,
                             self.t().clone(), // t はそのまま
                         )

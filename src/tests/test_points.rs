@@ -1,4 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::SpaceTimeId;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
 #[cfg(test)]
 mod tests {
@@ -10,11 +11,11 @@ mod tests {
     fn create_test_id(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap()
     }
@@ -62,11 +63,11 @@ mod tests {
     fn test_center_with_ranges() {
         let id = SpaceTimeId::new(
             3,
-            DimensionRange::LimitRange(-2, 2),
-            DimensionRange::LimitRange(1, 3),
-            DimensionRange::LimitRange(2, 4),
+            LimitRange(-2, 2),
+            LimitRange(1, 3),
+            LimitRange(2, 4),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -91,11 +92,11 @@ mod tests {
     fn test_center_with_any_dimensions() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Single(1),
-            DimensionRange::Any,
+            Any,
+            Single(1),
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -236,11 +237,11 @@ mod tests {
     fn test_vertex_with_ranges() {
         let id = SpaceTimeId::new(
             3,
-            DimensionRange::LimitRange(-1, 1),
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::LimitRange(2, 3),
+            LimitRange(-1, 1),
+            LimitRange(1, 2),
+            LimitRange(2, 3),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -260,11 +261,11 @@ mod tests {
     fn test_vertex_with_any_dimensions() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 

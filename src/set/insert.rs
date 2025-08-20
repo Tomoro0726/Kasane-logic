@@ -1,6 +1,7 @@
-use crate::id::DimensionRange;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::relation::Containment::{self, Full, Partial};
-use crate::{id::SpaceTimeId, set::SpaceTimeIdSet};
+use crate::set::SpaceTimeIdSet;
 
 impl SpaceTimeIdSet {
     /// Inserts a `SpaceTimeId` into the `SpaceTimeIdSet`, avoiding redundant or overlapping entries.
@@ -55,13 +56,13 @@ impl SpaceTimeIdSet {
     fn scale_range_for_z_u64(range: DimensionRange<u64>, delta_z: u16) -> DimensionRange<u64> {
         let scale = u64::from(2_u16.pow(delta_z as u32));
         match range {
-            DimensionRange::Single(_) => {
+            Single(_) => {
                 panic!("このパターンは上位で除外されているはず");
             }
-            DimensionRange::LimitRange(s, e) => DimensionRange::LimitRange(s / scale, e / scale),
-            DimensionRange::AfterUnLimitRange(s) => DimensionRange::AfterUnLimitRange(s / scale),
-            DimensionRange::BeforeUnLimitRange(e) => DimensionRange::BeforeUnLimitRange(e / scale),
-            DimensionRange::Any => DimensionRange::Any,
+            LimitRange(s, e) => LimitRange(s / scale, e / scale),
+            AfterUnLimitRange(s) => AfterUnLimitRange(s / scale),
+            BeforeUnLimitRange(e) => BeforeUnLimitRange(e / scale),
+            Any => Any,
         }
     }
 
@@ -69,13 +70,13 @@ impl SpaceTimeIdSet {
         let scale = 2_i64.pow(delta_z as u32);
 
         match range {
-            DimensionRange::Single(_) => {
+            Single(_) => {
                 panic!("このパターンは上位で除外されているはず");
             }
-            DimensionRange::LimitRange(s, e) => DimensionRange::LimitRange(s / scale, e / scale),
-            DimensionRange::AfterUnLimitRange(s) => DimensionRange::AfterUnLimitRange(s / scale),
-            DimensionRange::BeforeUnLimitRange(e) => DimensionRange::BeforeUnLimitRange(e / scale),
-            DimensionRange::Any => DimensionRange::Any,
+            LimitRange(s, e) => LimitRange(s / scale, e / scale),
+            AfterUnLimitRange(s) => AfterUnLimitRange(s / scale),
+            BeforeUnLimitRange(e) => BeforeUnLimitRange(e / scale),
+            Any => Any,
         }
     }
 
@@ -113,21 +114,21 @@ impl SpaceTimeIdSet {
         F: Fn(T) -> u64,
     {
         let result = match range {
-            DimensionRange::Single(_) => return None,
-            DimensionRange::LimitRange(s, e) => {
+            Single(_) => return None,
+            LimitRange(s, e) => {
                 let len = to_u64(e).saturating_sub(to_u64(s)).saturating_add(1);
                 z.saturating_sub(Self::count_trailing_zeros(len))
             }
-            DimensionRange::BeforeUnLimitRange(e) => {
+            BeforeUnLimitRange(e) => {
                 let len = to_u64(e).saturating_add(1);
                 z.saturating_sub(Self::count_trailing_zeros(len))
             }
-            DimensionRange::AfterUnLimitRange(s) => {
+            AfterUnLimitRange(s) => {
                 let max = 1u64 << z;
                 let len = max.saturating_sub(to_u64(s));
                 z.saturating_sub(Self::count_trailing_zeros(len))
             }
-            DimensionRange::Any => 0,
+            Any => 0,
         };
 
         if result == z { None } else { Some(result) }
@@ -141,8 +142,8 @@ impl SpaceTimeIdSet {
     /// F（i64）次元用
     fn optimal_f_max_z(range: DimensionRange<i64>, z: u16) -> Option<u16> {
         match range {
-            DimensionRange::Single(_) => None,
-            DimensionRange::LimitRange(s, e) => {
+            Single(_) => None,
+            LimitRange(s, e) => {
                 if e == !0 {
                     return None;
                 } else if e % 2 == 1 {
@@ -152,14 +153,14 @@ impl SpaceTimeIdSet {
                     return None;
                 }
             }
-            DimensionRange::BeforeUnLimitRange(e) => {
-                Self::optimal_f_max_z(DimensionRange::LimitRange(0, e), z)
+            BeforeUnLimitRange(e) => {
+                Self::optimal_f_max_z(LimitRange(0, e), z)
             }
-            DimensionRange::AfterUnLimitRange(s) => {
+            AfterUnLimitRange(s) => {
                 let max = 1i64 << z;
-                Self::optimal_f_max_z(DimensionRange::LimitRange(s, max), z)
+                Self::optimal_f_max_z(LimitRange(s, max), z)
             }
-            DimensionRange::Any => Some(0),
+            Any => Some(0),
         }
     }
 
@@ -179,20 +180,20 @@ impl SpaceTimeIdSet {
         let end;
 
         match other.t() {
-            DimensionRange::LimitRange(s, e) => {
+            LimitRange(s, e) => {
                 start = s;
                 end = e + 1
             }
-            DimensionRange::BeforeUnLimitRange(e) => {
+            BeforeUnLimitRange(e) => {
                 start = 0;
                 end = e + 1
             }
-            DimensionRange::AfterUnLimitRange(_) => return other,
-            DimensionRange::Single(s) => {
+            AfterUnLimitRange(_) => return other,
+            Single(s) => {
                 start = s;
                 end = s + 1
             }
-            DimensionRange::Any => return other,
+            Any => return other,
         }
         let start = other.i() * start;
         let end = other.i() * end;
@@ -208,7 +209,7 @@ impl SpaceTimeIdSet {
                 other.x(),
                 other.y(),
                 gcd,
-                DimensionRange::LimitRange(start / gcd, end / gcd - 1),
+                LimitRange(start / gcd, end / gcd - 1),
             )
             .unwrap();
         }
@@ -311,26 +312,26 @@ impl SpaceTimeIdSet {
             + From<u8>,
     {
         match target {
-            DimensionRange::Single(v) => match other {
-                DimensionRange::Single(s) => {
+            Single(v) => match other {
+                Single(s) => {
                     if v + T::from(1) == s {
-                        Ok(Some(DimensionRange::LimitRange(v, s)))
+                        Ok(Some(LimitRange(v, s)))
                     } else if s + T::from(1) == v {
-                        Ok(Some(DimensionRange::LimitRange(s, v)))
+                        Ok(Some(LimitRange(s, v)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::LimitRange(s, e) => {
+                LimitRange(s, e) => {
                     if s > v {
                         if s - T::from(1) == v {
-                            Ok(Some(DimensionRange::LimitRange(v, e)))
+                            Ok(Some(LimitRange(v, e)))
                         } else {
                             Ok(None)
                         }
                     } else if e < v {
                         if e + T::from(1) == v {
-                            Ok(Some(DimensionRange::LimitRange(s, v)))
+                            Ok(Some(LimitRange(s, v)))
                         } else {
                             Ok(None)
                         }
@@ -338,71 +339,71 @@ impl SpaceTimeIdSet {
                         Ok(None)
                     }
                 }
-                DimensionRange::AfterUnLimitRange(s) => {
+                AfterUnLimitRange(s) => {
                     if s - T::from(1) == v {
-                        Ok(Some(DimensionRange::AfterUnLimitRange(v)))
+                        Ok(Some(AfterUnLimitRange(v)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::BeforeUnLimitRange(e) => {
+                BeforeUnLimitRange(e) => {
                     if e + T::from(1) == v {
-                        Ok(Some(DimensionRange::BeforeUnLimitRange(v)))
+                        Ok(Some(BeforeUnLimitRange(v)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::Any => Err("重なりがある値が入力されました".to_string()),
+                Any => Err("重なりがある値が入力されました".to_string()),
             },
-            DimensionRange::LimitRange(vs, ve) => match other {
-                DimensionRange::Single(_) => Self::to_continuous_range(other, target),
-                DimensionRange::LimitRange(s, e) => {
+            LimitRange(vs, ve) => match other {
+                Single(_) => Self::to_continuous_range(other, target),
+                LimitRange(s, e) => {
                     if ve + T::from(1) == s {
-                        Ok(Some(DimensionRange::LimitRange(vs, e)))
+                        Ok(Some(LimitRange(vs, e)))
                     } else if e + T::from(1) == vs {
-                        Ok(Some(DimensionRange::LimitRange(s, ve)))
+                        Ok(Some(LimitRange(s, ve)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::AfterUnLimitRange(s) => {
+                AfterUnLimitRange(s) => {
                     if ve + T::from(1) == s {
-                        Ok(Some(DimensionRange::AfterUnLimitRange(vs)))
+                        Ok(Some(AfterUnLimitRange(vs)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::BeforeUnLimitRange(e) => {
+                BeforeUnLimitRange(e) => {
                     if e + T::from(1) == vs {
-                        Ok(Some(DimensionRange::BeforeUnLimitRange(ve)))
+                        Ok(Some(BeforeUnLimitRange(ve)))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::Any => Err("重なりがある値が入力されました".to_string()),
+                Any => Err("重なりがある値が入力されました".to_string()),
             },
-            DimensionRange::AfterUnLimitRange(vs) => match other {
-                DimensionRange::BeforeUnLimitRange(e) => {
+            AfterUnLimitRange(vs) => match other {
+                BeforeUnLimitRange(e) => {
                     if vs + T::from(1) == e {
-                        Ok(Some(DimensionRange::Any))
+                        Ok(Some(Any))
                     } else {
                         Ok(None)
                     }
                 }
-                DimensionRange::AfterUnLimitRange(_) => {
+                AfterUnLimitRange(_) => {
                     Err("重なりがある値が入力されました".to_string())
                 }
-                DimensionRange::Any => Err("重なりがある値が入力されました".to_string()),
+                Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },
-            DimensionRange::BeforeUnLimitRange(_) => match other {
-                DimensionRange::BeforeUnLimitRange(_) => {
+            BeforeUnLimitRange(_) => match other {
+                BeforeUnLimitRange(_) => {
                     Err("重なりがある値が入力されました".to_string())
                 }
-                DimensionRange::Any => Err("重なりがある値が入力されました".to_string()),
+                Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },
-            DimensionRange::Any => Err("重なりがある値が入力されました".to_string()),
+            Any => Err("重なりがある値が入力されました".to_string()),
         }
     }
 }

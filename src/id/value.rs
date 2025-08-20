@@ -1,4 +1,5 @@
 use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
 impl SpaceTimeId {
     /// Returns the F dimension (vertical/altitude) value.
@@ -13,10 +14,10 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let f_value = stid.f();
-    /// assert_eq!(f_value, DimensionRange::Single(5));
+    /// assert_eq!(f_value, Single(5));
     /// ```
     pub fn f(&self) -> DimensionRange<i64> {
         self.f
@@ -33,10 +34,10 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let x_value = stid.x();
-    /// assert_eq!(x_value, DimensionRange::Single(3));
+    /// assert_eq!(x_value, Single(3));
     /// ```
     pub fn x(&self) -> DimensionRange<u64> {
         self.x
@@ -54,10 +55,10 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let y_value = stid.y();
-    /// assert_eq!(y_value, DimensionRange::Single(10));
+    /// assert_eq!(y_value, Single(10));
     /// ```
     pub fn y(&self) -> DimensionRange<u64> {
         self.y
@@ -75,10 +76,10 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let t_value = stid.t();
-    /// assert_eq!(t_value, DimensionRange::Single(100));
+    /// assert_eq!(t_value, Single(100));
     /// ```
     pub fn t(&self) -> DimensionRange<u32> {
         self.t
@@ -96,8 +97,8 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let zoom_level = stid.z();
     /// assert_eq!(zoom_level, 4);
     /// ```
@@ -117,8 +118,8 @@ impl SpaceTimeId {
     /// ```
     /// use logic::id::{DimensionRange, SpaceTimeId};
     ///
-    /// let stid = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-    ///                             DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+    /// let stid = SpaceTimeId::new(4, Single(5), Single(3),
+    ///                             Single(10), 60, Single(100)).unwrap();
     /// let time_interval = stid.i();
     /// assert_eq!(time_interval, 60);
     /// ```

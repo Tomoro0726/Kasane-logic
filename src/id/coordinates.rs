@@ -1,4 +1,5 @@
 use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use std::f64::consts::PI;
 
 #[cfg_attr(
@@ -70,11 +71,11 @@ impl SpaceTimeId {
     {
         let max_val = n;
         match *range {
-            DimensionRange::Single(v) => (func(v, n), func(v + 1, n)),
-            DimensionRange::LimitRange(start, end) => (func(start, n), func(end + 1, n)),
-            DimensionRange::BeforeUnLimitRange(end) => (func(0, n), func(end + 1, n)),
-            DimensionRange::AfterUnLimitRange(start) => (func(start, n), func(max_val, n)),
-            DimensionRange::Any => (func(0, n), func(max_val, n)),
+            Single(v) => (func(v, n), func(v + 1, n)),
+            LimitRange(start, end) => (func(start, n), func(end + 1, n)),
+            BeforeUnLimitRange(end) => (func(0, n), func(end + 1, n)),
+            AfterUnLimitRange(start) => (func(start, n), func(max_val, n)),
+            Any => (func(0, n), func(max_val, n)),
         }
     }
 
@@ -84,11 +85,11 @@ impl SpaceTimeId {
     {
         let max_val = n as i64;
         match *range {
-            DimensionRange::Single(v) => (func(v, n), func(v + 1, n)),
-            DimensionRange::LimitRange(start, end) => (func(start, n), func(end + 1, n)),
-            DimensionRange::BeforeUnLimitRange(end) => (func(-max_val, n), func(end + 1, n)),
-            DimensionRange::AfterUnLimitRange(start) => (func(start, n), func(max_val, n)),
-            DimensionRange::Any => (func(-max_val, n), func(max_val, n)),
+            Single(v) => (func(v, n), func(v + 1, n)),
+            LimitRange(start, end) => (func(start, n), func(end + 1, n)),
+            BeforeUnLimitRange(end) => (func(-max_val, n), func(end + 1, n)),
+            AfterUnLimitRange(start) => (func(start, n), func(max_val, n)),
+            Any => (func(-max_val, n), func(max_val, n)),
         }
     }
 }

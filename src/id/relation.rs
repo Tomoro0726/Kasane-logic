@@ -1,6 +1,7 @@
 use std::ops::{Add, Mul, Sub};
 
 use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
 #[derive(Debug, PartialEq)]
 pub enum Containment {
@@ -110,22 +111,22 @@ impl SpaceTimeId {
             + Ord,
     {
         match a {
-            DimensionRange::Single(a_v) => match b {
-                DimensionRange::Single(b_v) => {
+            Single(a_v) => match b {
+                Single(b_v) => {
                     if a_v == b_v {
                         Some(a)
                     } else {
                         None
                     }
                 }
-                DimensionRange::LimitRange(b_v_s, b_v_e) => {
+                LimitRange(b_v_s, b_v_e) => {
                     if b_v_s <= a_v && a_v <= b_v_e {
                         Some(a)
                     } else {
                         None
                     }
                 }
-                DimensionRange::AfterUnLimitRange(b_v_s) => {
+                AfterUnLimitRange(b_v_s) => {
                     if b_v_s <= a_v {
                         Some(a)
                     } else {
@@ -133,41 +134,41 @@ impl SpaceTimeId {
                     }
                 }
 
-                DimensionRange::BeforeUnLimitRange(b_v_e) => {
+                BeforeUnLimitRange(b_v_e) => {
                     if a_v <= b_v_e {
                         Some(a)
                     } else {
                         None
                     }
                 }
-                DimensionRange::Any => Some(a),
+                Any => Some(a),
             },
-            DimensionRange::LimitRange(a_v_s, a_v_e) => match b {
-                DimensionRange::LimitRange(b_v_s, b_v_e) => {
+            LimitRange(a_v_s, a_v_e) => match b {
+                LimitRange(b_v_s, b_v_e) => {
                     let start = std::cmp::max(a_v_s, b_v_s);
                     let end = std::cmp::min(a_v_e, b_v_e);
 
                     if start <= end {
-                        Some(DimensionRange::LimitRange(start, end))
+                        Some(LimitRange(start, end))
                     } else {
                         None
                     }
                 }
-                DimensionRange::AfterUnLimitRange(b_v_s) => {
+                AfterUnLimitRange(b_v_s) => {
                     if b_v_s <= a_v_e {
                         let start = std::cmp::max(a_v_s, b_v_s);
                         let end = a_v_e;
-                        Some(DimensionRange::LimitRange(start, end))
+                        Some(LimitRange(start, end))
                     } else {
                         None
                     }
                 }
-                DimensionRange::BeforeUnLimitRange(b_v_e) => {
+                BeforeUnLimitRange(b_v_e) => {
                     if b_v_e >= a_v_s {
                         let start = a_v_s;
                         let end = std::cmp::min(a_v_e, b_v_e);
                         if start <= end {
-                            Some(DimensionRange::LimitRange(start, end))
+                            Some(LimitRange(start, end))
                         } else {
                             None
                         }
@@ -175,34 +176,34 @@ impl SpaceTimeId {
                         None
                     }
                 }
-                DimensionRange::Any => Some(a),
+                Any => Some(a),
                 _ => Self::same_level_dimension_intersection(b, a),
             },
-            DimensionRange::AfterUnLimitRange(a_v_s) => match b {
-                DimensionRange::AfterUnLimitRange(b_v_s) => Some(
-                    DimensionRange::AfterUnLimitRange(std::cmp::max(a_v_s, b_v_s)),
+            AfterUnLimitRange(a_v_s) => match b {
+                AfterUnLimitRange(b_v_s) => Some(
+                    AfterUnLimitRange(std::cmp::max(a_v_s, b_v_s)),
                 ),
-                DimensionRange::BeforeUnLimitRange(b_v_e) => {
+                BeforeUnLimitRange(b_v_e) => {
                     if a_v_s <= b_v_e {
-                        Some(DimensionRange::LimitRange(a_v_s, b_v_e))
+                        Some(LimitRange(a_v_s, b_v_e))
                     } else {
                         None
                     }
                 }
-                DimensionRange::Any => Some(a),
+                Any => Some(a),
                 _ => Self::same_level_dimension_intersection(b, a),
             },
 
-            DimensionRange::BeforeUnLimitRange(a_v_e) => match b {
-                DimensionRange::BeforeUnLimitRange(b_v_e) => {
+            BeforeUnLimitRange(a_v_e) => match b {
+                BeforeUnLimitRange(b_v_e) => {
                     let end = std::cmp::min(a_v_e, b_v_e);
-                    Some(DimensionRange::BeforeUnLimitRange(end))
+                    Some(BeforeUnLimitRange(end))
                 }
-                DimensionRange::Any => Some(a),
+                Any => Some(a),
                 _ => Self::same_level_dimension_intersection(b, a),
             },
-            DimensionRange::Any => match b {
-                DimensionRange::Any => Some(a),
+            Any => match b {
+                Any => Some(a),
                 _ => Self::same_level_dimension_intersection(b, a),
             },
         }
