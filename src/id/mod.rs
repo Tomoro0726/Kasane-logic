@@ -323,10 +323,7 @@ impl SpaceTimeId {
 
                 DimensionRange::LimitRange(start, end) => {
                     if start > end {
-                        return Err(format!(
-                            "t dimension range is invalid: start {} > end {}.",
-                            start, end
-                        ));
+                        return validate_t_dim(&DimensionRange::LimitRange(end, start), i);
                     }
                     if start == end {
                         return Ok(DimensionRange::Single(start));

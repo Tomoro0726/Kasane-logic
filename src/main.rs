@@ -8,17 +8,9 @@ use logic::{
 };
 
 fn main() {
-    let id2 = SpaceTimeId::new(2, LimitRange(1, 3), Single(1), LimitRange(2, 1), 0, Any).unwrap();
+    let id2 = SpaceTimeId::new(3, Any, LimitRange(1, 3), Any, 3, BeforeUnLimitRange(6)).unwrap();
 
-    for id in id2.to_pure() {
-        print!("{},", id);
-    }
-    println!("");
-    // println!("-----------");
+    println!("{},", id2);
 
-    for id in id2.complement().to_pure() {
-        print!("{},", id);
-    }
-
-    // println!("{}", id1);
+    println!("{},", id2.complement());
 }

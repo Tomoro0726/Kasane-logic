@@ -92,8 +92,6 @@ impl SpaceTimeId {
             _ => panic!("x_inversions の配列長がおかしい！"),
         }
 
-        println!("X_TMP{:?}", tmp);
-
         // Y の補集合を展開
         tmp = tmp
             .into_iter()
@@ -119,7 +117,6 @@ impl SpaceTimeId {
                         [y1] => vec![
                             FXY {
                                 f: Some(Any),
-
                                 y: Some(*y1),
                                 ..a
                             },
@@ -128,6 +125,11 @@ impl SpaceTimeId {
                                 ..a
                             },
                         ],
+                        [] => vec![FXY {
+                            f: None,
+                            y: Some(Any),
+                            ..a
+                        }],
                         _ => panic!("y_inversions の配列長がおかしい！"),
                     }
                 } else {
@@ -135,8 +137,6 @@ impl SpaceTimeId {
                 }
             })
             .collect();
-
-        println!("XY_TMP{:?}", tmp);
 
         // F の補集合を展開
         tmp = tmp
@@ -146,6 +146,7 @@ impl SpaceTimeId {
                     match f_inversions.as_slice() {
                         [f1, f2] => vec![FXY { f: Some(*f1), ..a }, FXY { f: Some(*f2), ..a }],
                         [f1] => vec![FXY { f: Some(*f1), ..a }],
+                        [] => vec![],
                         _ => panic!("f_inversions の配列長がおかしい！"),
                     }
                 } else {
@@ -153,8 +154,6 @@ impl SpaceTimeId {
                 }
             })
             .collect();
-
-        println!("XYF_TMP{:?}", tmp);
 
         // 時間軸の補集合を展開
         for ele in tmp {
