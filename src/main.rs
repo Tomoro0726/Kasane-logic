@@ -19,6 +19,4 @@ fn main() {
     set.insert(id2);
 
     //println!("{}", set);
-
-    id.relation(other)
 }

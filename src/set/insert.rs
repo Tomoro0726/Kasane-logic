@@ -173,7 +173,7 @@ impl SpaceTimeIdSet {
     }
 
     //Iに関する最適化を行う関数
-    pub fn optimal_i(other: SpaceTimeId) -> SpaceTimeId {
+    fn optimal_i(other: SpaceTimeId) -> SpaceTimeId {
         let start;
         let end;
 
@@ -214,7 +214,7 @@ impl SpaceTimeIdSet {
     }
 
     //連続最適化を行う関数
-    pub fn optimal_push(&mut self, other: SpaceTimeId) {
+    fn optimal_push(&mut self, other: SpaceTimeId) {
         for stid in &mut self.inner {
             // Zoom level and interval must match to allow merging
             if stid.z() != other.z() || stid.i() != other.i() {
