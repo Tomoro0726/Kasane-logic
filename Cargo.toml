@@ -1,5 +1,5 @@
 [package]
-name = "Kasane-Logic"
+name = "kasane-logic"
 version = "0.0.1"
 edition = "2024"
 license = "MIT"

@@ -1,4 +1,4 @@
-use Kasane_Logic::{
+use kasane_logic::{
     id::{
         self,
         DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
