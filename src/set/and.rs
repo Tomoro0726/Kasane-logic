@@ -2,7 +2,7 @@
 
 use std::ops::BitAnd;
 
-use crate::{id::contain::Containment, set::SpaceTimeIdSet};
+use crate::{id::relation::Containment, set::SpaceTimeIdSet};
 
 /// Implements the `&` (intersection) operator for `SpaceTimeIdSet` and its references.
 ///
@@ -31,7 +31,7 @@ macro_rules! impl_bitand_for_spacetimeidset {
 
                 for self_stid in &self.inner {
                     for rhs_stid in &rhs.inner {
-                        match self_stid.containment_relation(rhs_stid) {
+                        match self_stid.relation(rhs_stid) {
                             Containment::Full => {
                                 result.push(rhs_stid.clone());
                             }

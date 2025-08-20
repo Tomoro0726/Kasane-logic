@@ -53,16 +53,9 @@ impl SpaceTimeId {
             }
         }
 
-        // Validate interval
-        if let Some(i) = i {
-            if i > self.i {
-                return Err("Target time interval must be a divisor of the current interval and less than or equal to it.".to_string());
-            }
-        }
-
+        let mut f = self.f.clone();
         let mut x = self.x.clone();
         let mut y = self.y.clone();
-        let mut f = self.f.clone();
         let mut t = self.t.clone();
 
         let z = match z {
@@ -84,14 +77,36 @@ impl SpaceTimeId {
         };
 
         let i = match i {
-            Some(i_new) => {
-                if self.i == i_new {
-                    i_new
+            Some(other_i) => {
+                if self.i != 0 && other_i == 0 {
+                    //時空間IDを空間IDに変換しようとしている場合
+                    return Err("時空間IDを空間IDに変換することはできないよ".to_string());
+                } else if self.i == 0 && other_i != 0 {
+                    //空間IDを時空間IDに変換しようとしている場合
+
+                    t = DimensionRange::Any;
+                    other_i
+                } else if self.i != 0 && other_i != 0 {
+                    //時空間IDを時空間IDに変換しようとしている場合
+                    //この時、other_iが元のiよりも大きい場合にはエラーを出す
+
+                    if self.i < other_i {
+                        return Err("自分より大きな粒度に変換はできないよ".to_string());
+                    };
+                    if self.i == other_i {
+                        other_i
+                    } else {
+                        //そうでないときは変換がはじめてできる。
+                        let gcd = Self::gcd(other_i, self.i);
+                        let t_coef = self.i / gcd;
+                        t = Self::change_scale_logic(&self.t, &t_coef)?;
+
+                        other_i
+                    }
                 } else {
-                    let gcd = Self::gcd(i_new, self.i);
-                    let t_coef = self.i / gcd;
-                    t = Self::change_scale_logic(&self.t, &t_coef)?;
-                    i_new
+                    //空間IDを空間IDに変換しようとしている場合
+                    t = DimensionRange::Any;
+                    other_i
                 }
             }
             None => self.i,

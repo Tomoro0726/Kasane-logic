@@ -1,5 +1,5 @@
 use crate::id::DimensionRange;
-use crate::id::contain::Containment::{self, Full, Partial};
+use crate::id::relation::Containment::{self, Full, Partial};
 use crate::{id::SpaceTimeId, set::SpaceTimeIdSet};
 
 impl SpaceTimeIdSet {
@@ -25,7 +25,7 @@ impl SpaceTimeIdSet {
         let mut should_insert = true;
 
         for stid in &self.inner {
-            match stid.containment_relation(&other) {
+            match stid.relation(&other) {
                 Full => {
                     return;
                 }
@@ -208,7 +208,7 @@ impl SpaceTimeIdSet {
                 other.x(),
                 other.y(),
                 gcd,
-                DimensionRange::LimitRange(start / gcd, end / gcd),
+                DimensionRange::LimitRange(start / gcd, end / gcd - 1),
             )
             .unwrap();
         }

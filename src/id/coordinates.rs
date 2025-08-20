@@ -12,6 +12,17 @@ pub struct Coordinates {
     pub altitude: (f64, f64),
 }
 
+#[cfg_attr(
+    feature = "serde_support",
+    derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)
+)]
+#[derive(Debug, Clone, Copy)]
+pub struct Point {
+    pub latitude: f64,
+    pub longitude: f64,
+    pub altitude: f64,
+}
+
 impl SpaceTimeId {
     /// Converts the `SpaceTimeId` into geographic coordinates (latitude, longitude, and altitude).
     ///
