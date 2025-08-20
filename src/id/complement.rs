@@ -28,6 +28,7 @@ impl SpaceTimeId {
         // i=0かつt=Anyの場合は時間次元はそのまま
         let is_pure_space = self.i == 0 && self.t == DimensionRange::Any;
 
+        // z=0ではデフォルトで全体を表すので、早期リターンする
         if self.z == 0 {
             return SpaceTimeIdSet::new();
         }
@@ -41,12 +42,155 @@ impl SpaceTimeId {
             Self::split_t_dimension(&self.t)
         };
 
-        println!("{:?}", f_inversions);
-        println!("{:?}", x_inversions);
-        println!("{:?}", y_inversions);
-        println!("{:?}", t_inversions);
+        /// None は未確定の値を意味する
+        #[derive(Debug, Clone, Copy)]
+        struct FXY {
+            f: Option<DimensionRange<i64>>,
+            x: Option<DimensionRange<u64>>,
+            y: Option<DimensionRange<u64>>,
+        }
 
+        let mut tmp = Vec::new();
         let mut result = SpaceTimeIdSet::new();
+
+        // X の値に関して処理
+        match x_inversions.as_slice() {
+            [] => tmp.push(FXY {
+                f: None,
+                x: Some(self.x),
+                y: None,
+            }),
+            [a] => {
+                tmp.push(FXY {
+                    f: Some(DimensionRange::Any),
+                    x: Some(*a),
+                    y: Some(DimensionRange::Any),
+                });
+                tmp.push(FXY {
+                    f: None,
+                    x: Some(self.x),
+                    y: None,
+                });
+            }
+            [a, b] => {
+                tmp.push(FXY {
+                    f: Some(DimensionRange::Any),
+                    x: Some(*a),
+                    y: Some(DimensionRange::Any),
+                });
+                tmp.push(FXY {
+                    f: None,
+                    x: Some(self.x),
+                    y: None,
+                });
+                tmp.push(FXY {
+                    f: Some(DimensionRange::Any),
+                    x: Some(*b),
+                    y: Some(DimensionRange::Any),
+                });
+            }
+            _ => panic!("x_inversions の配列長がおかしい！"),
+        }
+
+        println!("X_TMP{:?}", tmp);
+
+        // Y の補集合を展開
+        tmp = tmp
+            .into_iter()
+            .flat_map(|a| {
+                if a.y.is_none() {
+                    match y_inversions.as_slice() {
+                        [y1, y2] => vec![
+                            FXY {
+                                f: Some(Any),
+                                y: Some(*y1),
+                                ..a
+                            },
+                            FXY {
+                                y: Some(self.y),
+                                ..a
+                            },
+                            FXY {
+                                f: Some(Any),
+                                y: Some(*y2),
+                                ..a
+                            },
+                        ],
+                        [y1] => vec![
+                            FXY {
+                                f: Some(Any),
+
+                                y: Some(*y1),
+                                ..a
+                            },
+                            FXY {
+                                y: Some(self.y),
+                                ..a
+                            },
+                        ],
+                        _ => panic!("y_inversions の配列長がおかしい！"),
+                    }
+                } else {
+                    vec![a]
+                }
+            })
+            .collect();
+
+        println!("XY_TMP{:?}", tmp);
+
+        // F の補集合を展開
+        tmp = tmp
+            .into_iter()
+            .flat_map(|a| {
+                if a.f.is_none() {
+                    match f_inversions.as_slice() {
+                        [f1, f2] => vec![FXY { f: Some(*f1), ..a }, FXY { f: Some(*f2), ..a }],
+                        [f1] => vec![FXY { f: Some(*f1), ..a }],
+                        _ => panic!("f_inversions の配列長がおかしい！"),
+                    }
+                } else {
+                    vec![a]
+                }
+            })
+            .collect();
+
+        println!("XYF_TMP{:?}", tmp);
+
+        // 時間軸の補集合を展開
+        for ele in tmp {
+            match t_inversions.as_slice() {
+                [t1, t2] => {
+                    for t in [t1, t2] {
+                        let id = SpaceTimeId::new(
+                            self.z,
+                            ele.f.expect("f 未設定"),
+                            ele.x.expect("x 未設定"),
+                            ele.y.expect("y 未設定"),
+                            self.i,
+                            *t,
+                        )
+                        .expect("補集合 SpaceTimeId の生成に失敗");
+                        result.insert(id);
+                    }
+                }
+                [t1] => {
+                    let id = SpaceTimeId::new(
+                        self.z,
+                        ele.f.expect("f 未設定"),
+                        ele.x.expect("x 未設定"),
+                        ele.y.expect("y 未設定"),
+                        self.i,
+                        *t1,
+                    )
+                    .expect("補集合 SpaceTimeId の生成に失敗");
+                    result.insert(id);
+                }
+                [] => {
+                    // Any の場合は補集合なし
+                }
+                _ => panic!("t_inversions の配列長がおかしい！"),
+            }
+        }
 
         result
     }
@@ -85,7 +229,6 @@ impl SpaceTimeId {
                 }
             }
             DimensionRange::BeforeUnLimitRange(e) => {
-                let max = (1u64 << z) - 1;
                 if *e == max {
                     vec![]
                 } else {
