@@ -22,9 +22,9 @@ impl SpaceTimeIdSet {
     ///                            DimensionRange::Single(1), DimensionRange::Single(1),
     ///                            0, DimensionRange::Any).unwrap();
     /// let set = SpaceTimeIdSet::from(stid);
-    /// let pure_ids = set.to_pure(); // Returns multiple IDs with F dimension expanded
+    /// let pure_ids = set.pure(); // Returns multiple IDs with F dimension expanded
     /// ```
-    pub fn to_pure(&self) -> Vec<SpaceTimeId> {
+    pub fn pure(&self) -> Vec<SpaceTimeId> {
         let mut result = vec![];
         for stid in &self.inner {
             let stid_pure = stid.pure();

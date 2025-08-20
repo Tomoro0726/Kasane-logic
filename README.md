@@ -394,7 +394,7 @@ let outside = !set;
 - `insert(&mut self, other: SpaceTimeId)` - Add ID to set
 - `iter() -> impl Iterator<Item = &SpaceTimeId>` - Get iterator
 - `is_empty() -> bool` - Check if set is empty
-- `to_pure(&self) -> Vec<SpaceTimeId>` - Expand all set elements to pure form
+- `pure(&self) -> Vec<SpaceTimeId>` - Expand all set elements to pure form
 
 ### `SpaceTimeIdSet` Operators
 
