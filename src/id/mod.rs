@@ -6,6 +6,7 @@ pub mod pure;
 pub mod relation;
 pub mod value;
 pub mod vertex;
+pub mod with;
 
 /// Represents a value for a single dimension (F, X, Y, or T) in a SpaceTimeId.
 ///

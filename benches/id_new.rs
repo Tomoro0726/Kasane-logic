@@ -1,8 +1,8 @@
-use Kasane_Logic::id::{
+use criterion::{Criterion, criterion_group, criterion_main};
+use kasane_logic::id::{
     DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
     SpaceTimeId,
 };
-use criterion::{Criterion, criterion_group, criterion_main};
 use std::hint::black_box;
 
 fn bench_spacetimeid_valid_full_range(c: &mut Criterion) {
