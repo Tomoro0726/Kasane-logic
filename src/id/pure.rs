@@ -1,10 +1,10 @@
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 
 impl SpaceTimeId {
     /// 拡張記法 (Range, Before, After, Any) をすべて展開して
     /// 各次元が Single だけの純粋な ID 群を返す
-    pub fn to_pure(&self) -> Vec<SpaceTimeId> {
+    pub fn pure(&self) -> Vec<SpaceTimeId> {
         let z = self.z();
         let i = self.i();
 

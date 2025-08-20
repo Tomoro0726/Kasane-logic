@@ -1,5 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 use std::f64::consts::PI;
 
 #[cfg_attr(
@@ -32,7 +32,6 @@ impl SpaceTimeId {
     /// # Returns
     /// A [`Coordinates`] struct containing the latitude, longitude, and altitude ranges
     /// as floating-point tuples `(start, end)`, representing the spatial extent.
-
     pub fn coordinates(&self) -> Coordinates {
         let n = 2_u64.pow(self.z as u32);
 
