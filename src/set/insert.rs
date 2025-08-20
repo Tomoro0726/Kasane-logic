@@ -107,7 +107,7 @@ impl SpaceTimeIdSet {
         SpaceTimeId::new(max_z, new_f, new_x, new_y, other.i(), other.t()).unwrap()
     }
 
-    /// その次元範囲に対する最適ZoomLevelを計算する（z: u16, 戻り値: Option<u16>）
+    /// その次元範囲に対する最適ZoomLevelを計算する（z: `u16`, 戻り値: `Option<u16>`）
     /// 最適値が今と同じ場合はNoneを返す
     fn optimal_max_z_for_range<T, F>(range: DimensionRange<T>, z: u16, to_u64: F) -> Option<u16>
     where
