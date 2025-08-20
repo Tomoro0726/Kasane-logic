@@ -1,4 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::SpaceTimeId;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::set::SpaceTimeIdSet;
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 
@@ -10,22 +11,22 @@ mod tests {
     fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             i,
-            DimensionRange::Single(t),
+            Single(t),
         ).unwrap()
     }
 
     fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             0,
-            DimensionRange::Any,
+            Any,
         ).unwrap()
     }
 
@@ -332,20 +333,20 @@ mod tests {
     fn test_spacetime_idset_operations_with_ranges() {
         let id1 = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(0, 1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            LimitRange(0, 1),
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         ).unwrap();
         
         let id2 = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            LimitRange(1, 2),
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         ).unwrap();
         
         let set1 = SpaceTimeIdSet::from(id1);
@@ -365,20 +366,20 @@ mod tests {
     fn test_spacetime_idset_operations_with_any_dimensions() {
         let id1 = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Any,
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         ).unwrap();
         
         let id2 = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Any,
-            DimensionRange::Single(0),
+            Single(1),
+            Any,
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         ).unwrap();
         
         let set1 = SpaceTimeIdSet::from(id1);

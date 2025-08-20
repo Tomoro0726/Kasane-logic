@@ -1,4 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::SpaceTimeId;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -9,11 +10,11 @@ mod tests {
     fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             i,
-            DimensionRange::Single(t),
+            Single(t),
         )
         .unwrap()
     }
@@ -21,11 +22,11 @@ mod tests {
     fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap()
     }
@@ -70,11 +71,11 @@ mod tests {
         // Create two sets that represent the same physical space but with different range representations
         let range_id = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            LimitRange(1, 2),
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -132,22 +133,22 @@ mod tests {
         // Create a larger range
         let large_id = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(0, 3),
-            DimensionRange::LimitRange(0, 3),
-            DimensionRange::Single(0),
+            LimitRange(0, 3),
+            LimitRange(0, 3),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
         // Create a smaller range that's contained in the larger one
         let small_id = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::Single(0),
+            LimitRange(1, 2),
+            LimitRange(1, 2),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -242,21 +243,21 @@ mod tests {
     fn test_spacetime_idset_equality_with_ranges() {
         let range_id1 = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            LimitRange(1, 2),
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
         let range_id2 = SpaceTimeId::new(
             2,
-            DimensionRange::LimitRange(1, 2),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            LimitRange(1, 2),
+            Single(1),
+            Single(0),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -270,21 +271,21 @@ mod tests {
     fn test_spacetime_idset_equality_with_any_dimensions() {
         let any_id1 = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
         let any_id2 = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 

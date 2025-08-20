@@ -12,10 +12,10 @@ use crate::{id::relation::Containment, set::SpaceTimeIdSet};
 /// ```
 /// use logic::{id::{DimensionRange, SpaceTimeId}, set::SpaceTimeIdSet};
 ///
-/// let stid_a = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-///                               DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
-/// let stid_b = SpaceTimeId::new(4, DimensionRange::Single(5), DimensionRange::Single(3),
-///                               DimensionRange::Single(10), 60, DimensionRange::Single(100)).unwrap();
+/// let stid_a = SpaceTimeId::new(4, Single(5), Single(3),
+///                               Single(10), 60, Single(100)).unwrap();
+/// let stid_b = SpaceTimeId::new(4, Single(5), Single(3),
+///                               Single(10), 60, Single(100)).unwrap();
 /// let set_a = SpaceTimeIdSet::from(stid_a);
 /// let set_b = SpaceTimeIdSet::from(stid_b);
 /// let a_and_b = &set_a & &set_b;

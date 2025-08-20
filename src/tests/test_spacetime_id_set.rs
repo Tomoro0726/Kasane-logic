@@ -1,4 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::SpaceTimeId;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -9,11 +10,11 @@ mod tests {
     fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             i,
-            DimensionRange::Single(t),
+            Single(t),
         )
         .unwrap()
     }
@@ -21,11 +22,11 @@ mod tests {
     fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap()
     }
@@ -239,11 +240,11 @@ mod tests {
     fn test_spacetime_idset_with_ranges() {
         let id = SpaceTimeId::new(
             3,
-            DimensionRange::AfterUnLimitRange(-1),
-            DimensionRange::LimitRange(0, 2),
-            DimensionRange::Any,
+            AfterUnLimitRange(-1),
+            LimitRange(0, 2),
+            Any,
             60,
-            DimensionRange::BeforeUnLimitRange(10),
+            BeforeUnLimitRange(10),
         )
         .unwrap();
 
@@ -288,22 +289,22 @@ mod tests {
         // Insert a range
         let id1 = SpaceTimeId::new(
             2,
-            DimensionRange::Single(0),
-            DimensionRange::LimitRange(0, 2),
-            DimensionRange::Single(1),
+            Single(0),
+            LimitRange(0, 2),
+            Single(1),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
         // Insert an overlapping range
         let id2 = SpaceTimeId::new(
             2,
-            DimensionRange::Single(0),
-            DimensionRange::LimitRange(1, 3),
-            DimensionRange::Single(1),
+            Single(0),
+            LimitRange(1, 3),
+            Single(1),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -321,22 +322,22 @@ mod tests {
         // Insert a larger range
         let id1 = SpaceTimeId::new(
             3,
-            DimensionRange::Single(0),
-            DimensionRange::LimitRange(0, 7),
-            DimensionRange::Single(1),
+            Single(0),
+            LimitRange(0, 7),
+            Single(1),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
         // Insert a smaller contained range
         let id2 = SpaceTimeId::new(
             3,
-            DimensionRange::Single(0),
-            DimensionRange::LimitRange(2, 4),
-            DimensionRange::Single(1),
+            Single(0),
+            LimitRange(2, 4),
+            Single(1),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -353,11 +354,11 @@ mod tests {
 
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 

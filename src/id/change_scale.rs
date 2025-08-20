@@ -1,4 +1,5 @@
 use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use std::fmt::Debug;
 use std::ops::{Add, Mul, Sub};
 
@@ -84,7 +85,7 @@ impl SpaceTimeId {
                 } else if self.i == 0 && other_i != 0 {
                     //空間IDを時空間IDに変換しようとしている場合
 
-                    t = DimensionRange::Any;
+                    t = Any;
                     other_i
                 } else if self.i != 0 && other_i != 0 {
                     //時空間IDを時空間IDに変換しようとしている場合
@@ -105,7 +106,7 @@ impl SpaceTimeId {
                     }
                 } else {
                     //空間IDを空間IDに変換しようとしている場合
-                    t = DimensionRange::Any;
+                    t = Any;
                     other_i
                 }
             }
@@ -131,25 +132,25 @@ impl SpaceTimeId {
             .map_err(|e| format!("Failed to convert scale coefficient: {:?}", e))?;
 
         let scaled = match range {
-            DimensionRange::Single(v) => {
+            Single(v) => {
                 let start = *v * k_t;
                 let end = (*v + one) * k_t - one;
-                DimensionRange::LimitRange(start, end)
+                LimitRange(start, end)
             }
-            DimensionRange::LimitRange(s, e) => {
+            LimitRange(s, e) => {
                 let start = *s * k_t;
                 let end = (*e + one) * k_t - one;
-                DimensionRange::LimitRange(start, end)
+                LimitRange(start, end)
             }
-            DimensionRange::AfterUnLimitRange(v) => {
+            AfterUnLimitRange(v) => {
                 let start = *v * k_t;
-                DimensionRange::AfterUnLimitRange(start)
+                AfterUnLimitRange(start)
             }
-            DimensionRange::BeforeUnLimitRange(v) => {
+            BeforeUnLimitRange(v) => {
                 let end = (*v + one) * k_t - one;
-                DimensionRange::BeforeUnLimitRange(end)
+                BeforeUnLimitRange(end)
             }
-            DimensionRange::Any => DimensionRange::Any,
+            Any => Any,
         };
 
         Ok(scaled)
