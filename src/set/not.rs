@@ -18,8 +18,8 @@ use std::ops::Not;
 /// use logic::{id::{DimensionRange, SpaceTimeId}, set::SpaceTimeIdSet};
 ///
 /// // Create a spatial ID (i=0, t=Any)
-/// let stid = SpaceTimeId::new(2, DimensionRange::Single(1), DimensionRange::Single(1),
-///                             DimensionRange::Single(1), 0, DimensionRange::Any).unwrap();
+/// let stid = SpaceTimeId::new(2, Single(1), Single(1),
+///                             Single(1), 0, Any).unwrap();
 /// let a = SpaceTimeIdSet::from(stid);
 /// let not_a = !&a; // complement of a using reference to avoid move
 /// ```

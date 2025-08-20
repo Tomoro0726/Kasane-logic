@@ -1,4 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
+use crate::id::SpaceTimeId;
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -9,11 +10,11 @@ mod tests {
     fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             i,
-            DimensionRange::Single(t),
+            Single(t),
         )
         .unwrap()
     }
@@ -21,11 +22,11 @@ mod tests {
     fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
+            Single(f),
+            Single(x),
+            Single(y),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap()
     }
@@ -35,11 +36,11 @@ mod tests {
     fn test_complement_universal_space() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -51,11 +52,11 @@ mod tests {
     fn test_complement_universal_time() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Single(1),
+            Single(1),
+            Single(0),
             60,                  // Non-zero interval
-            DimensionRange::Any, // Any time
+            Any, // Any time
         )
         .unwrap();
 
@@ -67,11 +68,11 @@ mod tests {
     fn test_complement_spatial_any_with_time_any() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Any,
+            Any,
+            Any,
             60,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -93,11 +94,11 @@ mod tests {
     fn test_complement_partial_x_dimension() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1), // Not Any
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Single(1), // Not Any
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -109,11 +110,11 @@ mod tests {
     fn test_complement_partial_y_dimension() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Single(1), // Not Any
-            DimensionRange::Any,
+            Any,
+            Single(1), // Not Any
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -125,11 +126,11 @@ mod tests {
     fn test_complement_partial_f_dimension() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Any,
-            DimensionRange::Any,
-            DimensionRange::Single(0), // Not Any
+            Any,
+            Any,
+            Single(0), // Not Any
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -151,11 +152,11 @@ mod tests {
     fn test_complement_range_dimensions() {
         let id = SpaceTimeId::new(
             3,
-            DimensionRange::LimitRange(-2, 2),
-            DimensionRange::LimitRange(1, 3),
-            DimensionRange::LimitRange(2, 4),
+            LimitRange(-2, 2),
+            LimitRange(1, 3),
+            LimitRange(2, 4),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -167,11 +168,11 @@ mod tests {
     fn test_complement_after_unlimit_range() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::AfterUnLimitRange(2),
-            DimensionRange::Any,
-            DimensionRange::Any,
+            AfterUnLimitRange(2),
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -183,11 +184,11 @@ mod tests {
     fn test_complement_before_unlimit_range() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::BeforeUnLimitRange(1),
-            DimensionRange::Any,
-            DimensionRange::Any,
+            BeforeUnLimitRange(1),
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -240,11 +241,11 @@ mod tests {
         // Test at zoom level boundaries
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(3), // Max x for z=2
-            DimensionRange::Single(3), // Max y for z=2
-            DimensionRange::Single(3), // Max f for z=2
+            Single(3), // Max x for z=2
+            Single(3), // Max y for z=2
+            Single(3), // Max f for z=2
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -256,11 +257,11 @@ mod tests {
     fn test_complement_negative_f_values() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(-2), // Negative f
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
+            Single(-2), // Negative f
+            Single(1),
+            Single(1),
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -292,11 +293,11 @@ mod tests {
     fn test_complement_time_range() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Single(1),
+            Single(1),
+            Single(0),
             60,
-            DimensionRange::LimitRange(10, 20),
+            LimitRange(10, 20),
         )
         .unwrap();
 
@@ -308,11 +309,11 @@ mod tests {
     fn test_complement_time_after_unlimit() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Single(1),
+            Single(1),
+            Single(0),
             60,
-            DimensionRange::AfterUnLimitRange(100),
+            AfterUnLimitRange(100),
         )
         .unwrap();
 
@@ -325,11 +326,11 @@ mod tests {
     fn test_complement_time_before_unlimit() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Single(1),
+            Single(1),
+            Single(0),
             60,
-            DimensionRange::BeforeUnLimitRange(50),
+            BeforeUnLimitRange(50),
         )
         .unwrap();
 
@@ -354,25 +355,25 @@ mod tests {
             let min_f = -(1i64 << comp_id.z());
 
             match comp_id.x() {
-                DimensionRange::Single(v) => assert!(v <= max_xy),
-                DimensionRange::LimitRange(start, end) => {
+                Single(v) => assert!(v <= max_xy),
+                LimitRange(start, end) => {
                     assert!(start <= end);
                     assert!(end <= max_xy);
                 }
-                DimensionRange::AfterUnLimitRange(_) => {} // Valid by construction
-                DimensionRange::BeforeUnLimitRange(_) => {} // Valid by construction
-                DimensionRange::Any => {}                  // Valid by construction
+                AfterUnLimitRange(_) => {} // Valid by construction
+                BeforeUnLimitRange(_) => {} // Valid by construction
+                Any => {}                  // Valid by construction
             }
 
             match comp_id.f() {
-                DimensionRange::Single(v) => assert!(v >= min_f && v <= max_f),
-                DimensionRange::LimitRange(start, end) => {
+                Single(v) => assert!(v >= min_f && v <= max_f),
+                LimitRange(start, end) => {
                     assert!(start <= end);
                     assert!(start >= min_f && end <= max_f);
                 }
-                DimensionRange::AfterUnLimitRange(_) => {} // Valid by construction
-                DimensionRange::BeforeUnLimitRange(_) => {} // Valid by construction
-                DimensionRange::Any => {}                  // Valid by construction
+                AfterUnLimitRange(_) => {} // Valid by construction
+                BeforeUnLimitRange(_) => {} // Valid by construction
+                Any => {}                  // Valid by construction
             }
         }
     }
@@ -395,11 +396,11 @@ mod tests {
     fn test_complement_single_x() {
         let id = SpaceTimeId::new(
             1, // Only 2 tiles: x=0 and x=1
-            DimensionRange::Single(0),
-            DimensionRange::Any,
-            DimensionRange::Any,
+            Single(0),
+            Any,
+            Any,
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
@@ -408,11 +409,11 @@ mod tests {
 
         // Complement should contain x=1 in some form
         let has_x1 = complement.iter().any(|comp_id| match comp_id.x() {
-            DimensionRange::Single(v) => v == 1,
-            DimensionRange::LimitRange(start, end) => start <= 1 && end >= 1,
-            DimensionRange::AfterUnLimitRange(start) => start <= 1,
-            DimensionRange::BeforeUnLimitRange(end) => end >= 1,
-            DimensionRange::Any => true,
+            Single(v) => v == 1,
+            LimitRange(start, end) => start <= 1 && end >= 1,
+            AfterUnLimitRange(start) => start <= 1,
+            BeforeUnLimitRange(end) => end >= 1,
+            Any => true,
         });
         assert!(has_x1);
     }
@@ -422,11 +423,11 @@ mod tests {
     fn test_complement_multiple_constraints() {
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(1),
-            DimensionRange::Single(1),
-            DimensionRange::Single(0),
+            Single(1),
+            Single(1),
+            Single(0),
             60,
-            DimensionRange::Single(10),
+            Single(10),
         )
         .unwrap();
 
@@ -443,11 +444,11 @@ mod tests {
         // Test at coordinate boundaries
         let id = SpaceTimeId::new(
             2,
-            DimensionRange::Single(-4), // Min f for z=2
-            DimensionRange::Single(0),  // Min x
-            DimensionRange::Single(0),  // Min y
+            Single(-4), // Min f for z=2
+            Single(0),  // Min x
+            Single(0),  // Min y
             0,
-            DimensionRange::Any,
+            Any,
         )
         .unwrap();
 
