@@ -4,7 +4,7 @@ pub mod equal;
 pub mod insert;
 pub mod not;
 pub mod or;
-pub mod to_pure;
+pub mod pure;
 pub mod xor;
 
 #[derive(Clone)]

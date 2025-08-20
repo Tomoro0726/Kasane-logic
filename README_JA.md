@@ -398,7 +398,7 @@ let outside = !set;
 - `insert(&mut self, other: SpaceTimeId)` - ID を集合に追加
 - `iter() -> impl Iterator<Item = &SpaceTimeId>` - イテレータを取得
 - `is_empty() -> bool` - 集合が空かを確認
-- `to_pure(&self) -> Vec<SpaceTimeId>` - 集合内の全要素を純粋形式に展開
+- `pure(&self) -> Vec<SpaceTimeId>` - 集合内の全要素を純粋形式に展開
 
 ### `SpaceTimeIdSet` 演算子
 
