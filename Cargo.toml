@@ -1,7 +1,9 @@
 [package]
-name = "logic"
-version = "0.1.0"
+name = "Kasane-Logic"
+version = "0.0.1"
 edition = "2024"
+license = "MIT"
+
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
