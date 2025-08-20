@@ -2,6 +2,23 @@ use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, Limi
 use crate::id::{DimensionRange, SpaceTimeId};
 
 impl SpaceTimeId {
+    /// Expands all dimension ranges into individual `SpaceTimeId` instances with single values only.
+    /// 
+    /// This method converts extended notation (Range, Before, After, Any) into a collection of
+    /// pure space-time IDs where each dimension uses only `Single` variants. This is useful
+    /// for processing operations that require discrete, individual space-time cells.
+    /// 
+    /// # Returns
+    /// 
+    /// A `Vec<SpaceTimeId>` containing all individual IDs that represent the same space-time
+    /// region as the original ID, but with each dimension expanded to single values.
+    /// 
+    /// # Note
+    /// 
+    /// The T dimension is preserved as-is and not expanded, maintaining the original temporal range.
+    /// 
+    /// # Japanese Note
+    /// 
     /// 拡張記法 (Range, Before, After, Any) をすべて展開して
     /// 各次元が Single だけの純粋な ID 群を返す
     pub fn pure(&self) -> Vec<SpaceTimeId> {

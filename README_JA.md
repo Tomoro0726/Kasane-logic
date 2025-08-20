@@ -195,7 +195,7 @@ println!("補集合: {}", complement_set);
 
 ### 🔍 純粋ID展開
 
-#### `to_pure(&self) -> Vec<SpaceTimeId>`
+#### `pure(&self) -> Vec<SpaceTimeId>`
 
 空間次元（F、X、Y）の全ての範囲記法（Any、LimitRange、BeforeUnLimitRange、AfterUnLimitRange）を、Single値のみを持つ個別のSpaceTimeIdに展開します。時間次元（T）はそのまま保持されます。
 
@@ -213,7 +213,7 @@ let stid = SpaceTimeId::new(
 ).unwrap();
 
 // 純粋IDに展開
-let pure_ids = stid.to_pure();
+let pure_ids = stid.pure();
 println!("{}個の純粋IDに展開されました", pure_ids.len()); // 4個のID（2個のF値 × 2個のX値 × 1個のY値）
 
 // 各純粋IDはF、X、Y次元にSingle値のみを持ちます
@@ -377,7 +377,13 @@ let outside = !set;
 - `change_scale(z: Option<u16>, i: Option<u32>) -> Result<SpaceTimeId, String>` - 解像度を変更
 - `containment_relation(&other: &SpaceTimeId) -> Containment` - 包含関係を確認
 - `complement() -> SpaceTimeIdSet` - 補集合を取得
-- `to_pure() -> Vec<SpaceTimeId>` - 範囲次元を個別のSpaceTimeIdに展開
+- `pure() -> Vec<SpaceTimeId>` - 範囲次元を個別のSpaceTimeIdに展開
+- `with_z(z: u16) -> Result<SpaceTimeId, String>` - 異なるズームレベルで新しいIDを作成
+- `with_f(f: DimensionRange<i64>) -> Result<SpaceTimeId, String>` - 異なるF次元で新しいIDを作成
+- `with_x(x: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - 異なるX次元で新しいIDを作成
+- `with_y(y: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - 異なるY次元で新しいIDを作成
+- `with_i(i: u32) -> Result<SpaceTimeId, String>` - 異なる時間間隔で新しいIDを作成
+- `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるT次元で新しいIDを作成
 - `f() -> DimensionRange<i64>` - F 次元の値を取得
 - `x() -> DimensionRange<u64>` - X 次元の値を取得
 - `y() -> DimensionRange<u64>` - Y 次元の値を取得
@@ -392,6 +398,7 @@ let outside = !set;
 - `insert(&mut self, other: SpaceTimeId)` - ID を集合に追加
 - `iter() -> impl Iterator<Item = &SpaceTimeId>` - イテレータを取得
 - `is_empty() -> bool` - 集合が空かを確認
+- `to_pure(&self) -> Vec<SpaceTimeId>` - 集合内の全要素を純粋形式に展開
 
 ### `SpaceTimeIdSet` 演算子
 
