@@ -3,14 +3,20 @@ use std::ops::{Add, Mul, Sub};
 use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
+/// Represents the containment relationship between two `SpaceTimeId` instances.
+/// 
+/// This enum describes how two space-time regions relate to each other in terms of
+/// spatial and temporal overlap.
 #[derive(Debug, PartialEq)]
 pub enum Containment {
     /// Indicates that `self` fully contains the `other` ID.
+    /// The entire region represented by `other` lies within `self`.
     Full,
     /// Indicates that `self` and `other` partially overlap.
     /// The associated `SpaceTimeId` represents the intersection area.
     Partial(SpaceTimeId),
     /// Indicates that there is no overlap between `self` and `other`.
+    /// The two regions are completely disjoint.
     None,
 }
 
@@ -27,13 +33,21 @@ impl SpaceTimeId {
     ///
     /// # Returns
     ///
-    /// A `Result` containing a `Containment` enum:
-    /// - `Ok(Containment::Full)` if `self`'s area completely covers `other`'s area.
-    /// - `Ok(Containment::Partial(intersection_id))` if they overlap, where `intersection_id` is the common area.
-    /// - `Ok(Containment::None)` if they do not overlap at all.
-    /// - `Err(String)` if scaling to a common resolution fails (e.g., due to invalid parameters).
+    /// A `Containment` enum:
+    /// - `Containment::Full` if `self`'s area completely covers `other`'s area.
+    /// - `Containment::Partial(intersection_id)` if they overlap, where `intersection_id` is the common area.
+    /// - `Containment::None` if they do not overlap at all.
     ///
-    pub fn relation(&self, &other: &SpaceTimeId) -> Containment {
+    /// # Example
+    ///
+    /// ```rust
+    /// use logic::id::{DimensionRange::Single, SpaceTimeId};
+    /// 
+    /// let stid1 = SpaceTimeId::new(4, Single(5), Single(3), Single(10), 60, Single(100)).unwrap();
+    /// let stid2 = SpaceTimeId::new(4, Single(5), Single(3), Single(10), 60, Single(100)).unwrap();
+    /// let containment = stid1.containment_relation(&stid2);
+    /// ```
+    pub fn containment_relation(&self, other: &SpaceTimeId) -> Containment {
         let target_z;
         let target_i;
 

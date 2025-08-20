@@ -26,7 +26,7 @@ impl SpaceTimeIdSet {
         let mut should_insert = true;
 
         for stid in &self.inner {
-            match stid.relation(&other) {
+            match stid.containment_relation(&other) {
                 Full => {
                     return;
                 }
