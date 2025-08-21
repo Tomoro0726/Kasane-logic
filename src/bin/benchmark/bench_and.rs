@@ -12,9 +12,9 @@ pub fn benchmark_and(zoom_level: &i64) {
 
     let mut zoom_level_bench = vec![0; *zoom_level as usize + 1];
     for z in 0..=*zoom_level {
-        let max_row:i64 = 2_i64.pow(z as u32);
+        let max_row:i64 = 2_i64.pow(z as u32) - 1;
         //下記で、直積集合にしてloopを回す
-        for (f1,x1,y1,f2,x2,y2) in iproduct!(0..=max_row, 0..=max_row as u64, 0..=max_row as u64, 0..=max_row, 0..=max_row as u64, 0..=max_row as u64) {
+        for (f1,x1,y1,f2,x2,y2) in iproduct!(-max_row..=max_row, 0..=max_row as u64, 0..=max_row as u64, -max_row..=max_row, 0..=max_row as u64, 0..=max_row as u64) {
             //setを作る
             let mut set_a = SpaceTimeIdSet::new();
             let mut set_b = SpaceTimeIdSet::new();
@@ -23,7 +23,7 @@ pub fn benchmark_and(zoom_level: &i64) {
                 DimensionRange::Single(f1),
                 DimensionRange::Single(x1),
                 DimensionRange::Single(y1),
-                0,
+                1,
                 DimensionRange::Single(0),
             ).unwrap();
             let stid_b = SpaceTimeId::new(
@@ -31,7 +31,7 @@ pub fn benchmark_and(zoom_level: &i64) {
                 DimensionRange::Single(f2),
                 DimensionRange::Single(x2),
                 DimensionRange::Single(y2),
-                0,
+                1,
                 DimensionRange::Single(0),
             ).unwrap();
 
