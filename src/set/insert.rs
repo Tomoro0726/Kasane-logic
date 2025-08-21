@@ -1,5 +1,5 @@
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
-use crate::id::relation::Containment::{self, Full, Partial};
+use crate::id::relation::{Relation, relation};
 use crate::id::{DimensionRange, SpaceTimeId};
 use crate::set::SpaceTimeIdSet;
 
@@ -15,34 +15,50 @@ impl SpaceTimeIdSet {
     ///
     /// * `other` - The `SpaceTimeId` to insert.
     pub fn insert(&mut self, other: SpaceTimeId) {
-        //最初はinnnerに突っ込んでよし
         if self.is_empty() {
-            //ZとIに関して粒度の最適化を実施
             self.inner.push(Self::optimal_z(Self::optimal_i(other)));
-
             return;
         }
 
         let mut should_insert = true;
 
         for stid in &self.inner {
-            match stid.relation(&other) {
-                Full => {
+            match relation(*stid, other) {
+                Relation::Equal(_) | Relation::Subset(_) => {
+                    // 既に包含されている or 完全一致 → 追加不要
                     return;
                 }
-                Partial(overlapping) => {
-                    let mut overlap_set = SpaceTimeIdSet::new();
-                    overlap_set.insert(overlapping);
+                Relation::Superset(existing) => {
+                    // 新しいIDが既存要素を包含 → 既存要素を置き換える
+                    // 差集合を取る場合は intersection を計算して残す
+                    let existing_set = SpaceTimeIdSet::from(existing);
+                    let new_set = SpaceTimeIdSet::from(other);
+                    let difference = new_set & !existing_set;
+                    let result = self.clone() | difference;
+                    self.inner = result.inner;
+                    should_insert = false;
+                    break;
+                }
+                Relation::Overlap(intersection) => {
+                    // 部分的に重なる場合
+                    let overlap_set = SpaceTimeIdSet::from(intersection);
 
-                    let tmp2 = SpaceTimeIdSet::from(other.clone());
-                    let difference = (!overlap_set) & tmp2;
+                    println!("INTER {}", !overlap_set.clone());
+
+                    let new_set = SpaceTimeIdSet::from(other);
+
+                    println!("OTHER {}", other);
+
+                    let difference = new_set & !overlap_set;
+
+                    println!("DIFF  {}", difference);
 
                     let result = self.clone() | difference;
                     self.inner = result.inner;
                     should_insert = false;
                     break;
                 }
-                Containment::None => {
+                Relation::Disjoint => {
                     continue;
                 }
             }

@@ -3,20 +3,39 @@ use kasane_logic::{
         self,
         DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
         SpaceTimeId,
+        relation::relation,
     },
     set::SpaceTimeIdSet,
 };
 
 fn main() {
-    let id = SpaceTimeId::new(3, LimitRange(1, 3), LimitRange(1, 3), Any, 3, Single(6)).unwrap();
-    //println!("{},", id);
+    let id = SpaceTimeId::new(
+        3,
+        LimitRange(1, 3),
+        LimitRange(1, 3),
+        LimitRange(1, 3),
+        3,
+        Single(6),
+    )
+    .unwrap();
+
+    let id2 = SpaceTimeId::new(
+        3,
+        LimitRange(1, 3),
+        LimitRange(1, 3),
+        LimitRange(1, 2),
+        0,
+        Any,
+    )
+    .unwrap();
+
+    // println!("{}", id2);
+    // println!("{}", id2.complement());
+    // println!("{:?}", relation(id, id2));
 
     let mut set = SpaceTimeIdSet::from(id);
 
-    let id2 = SpaceTimeId::new(3, LimitRange(1, 3), Any, LimitRange(1, 3), 0, Any).unwrap();
-    //println!("{},", id2);
+    // set.insert(id);
 
-    set.insert(id2);
-
-    //println!("{}", set);
+    println!("{}", !set);
 }
