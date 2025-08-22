@@ -1,10 +1,8 @@
-pub mod bench_and;
+mod benchmark;
+mod target_functions;
 
 fn main() {
-    let zoom_level :i64 = 3;
+    let zoom_level :i64 = 2;
     //ここにそれぞれの関数のベンチマークを計測する関数を書いていく。
-    bench_and::benchmark_and(&zoom_level);
-
-    println!("benchmark({})", zoom_level);
-
+    benchmark::benchmark(&zoom_level, target_functions::and, "Intersection");
 }
