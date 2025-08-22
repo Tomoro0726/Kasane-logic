@@ -24,13 +24,12 @@ impl SpaceTimeIdSet {
 
         for stid in &self.inner {
             match relation(*stid, other) {
-                Relation::Equal(_) | Relation::Subset(_) => {
+                Relation::Equal(v) => {
                     // 既に包含されている or 完全一致 → 追加不要
                     return;
                 }
-                Relation::Superset(existing) => {
-                    // 新しいIDが既存要素を包含 → 既存要素を置き換える
-                    // 差集合を取る場合は intersection を計算して残す
+                Relation::Subset(existing) => {
+                    //新しいIDが既存のIDを包含している場合、追加が必要なエリアを考えて、計算する
                     let existing_set = SpaceTimeIdSet::from(existing);
                     let new_set = SpaceTimeIdSet::from(other);
                     let difference = new_set & !existing_set;
@@ -39,11 +38,16 @@ impl SpaceTimeIdSet {
                     should_insert = false;
                     break;
                 }
+                Relation::Superset(existing) => {
+                    //この場合には既存のIDが新しいIDを完全に包含している
+                    println!("Superset");
+                    return;
+                }
                 Relation::Overlap(intersection) => {
                     // 部分的に重なる場合
                     let overlap_set = SpaceTimeIdSet::from(intersection);
 
-                    println!("INTER {}", !overlap_set.clone());
+                    println!("INTER {}", overlap_set.clone());
 
                     let new_set = SpaceTimeIdSet::from(other);
 
