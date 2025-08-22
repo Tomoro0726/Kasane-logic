@@ -1,9 +1,9 @@
 pub mod center;
-pub mod change_scale;
 pub mod complement;
 pub mod coordinates;
 pub mod pure;
 pub mod relation;
+pub mod scale;
 pub mod value;
 pub mod vertex;
 pub mod with;

@@ -1,14 +1,38 @@
+use std::any::Any;
+
 use kasane_logic::{
-    id::{
-        self,
-        DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
-        SpaceTimeId,
+    function::{
+        ecef::point_to_ecef::{self, point_to_ecef},
+        line::{self},
     },
+    id::{DimensionRange, SpaceTimeId, coordinates::Point},
     set::SpaceTimeIdSet,
 };
 
 fn main() {
-    let id2 = SpaceTimeId::new(3, Any, LimitRange(1, 3), Any, 3, BeforeUnLimitRange(6)).unwrap();
-    println!("{},", id2);
-    println!("{},", id2.complement());
+    let id = SpaceTimeId::new(
+        4,
+        DimensionRange::Single(3),
+        DimensionRange::Single(2),
+        DimensionRange::LimitRange(1, 2),
+        3,
+        DimensionRange::LimitRange(1, 2),
+    )
+    .unwrap();
+
+    let id2 = SpaceTimeId::new(
+        4,
+        DimensionRange::Single(3),
+        DimensionRange::Single(2),
+        DimensionRange::LimitRange(1, 2),
+        3,
+        DimensionRange::LimitRange(3, 4),
+    )
+    .unwrap();
+
+    let mut set1 = SpaceTimeIdSet::from(id);
+
+    set1.insert(id2);
+
+    println!("{}", set1);
 }

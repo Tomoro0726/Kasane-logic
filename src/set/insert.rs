@@ -1,6 +1,6 @@
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::relation::{Relation, relation};
 use crate::id::{DimensionRange, SpaceTimeId};
-use crate::id::relation::Containment::{self, Full, Partial};
 use crate::set::SpaceTimeIdSet;
 
 impl SpaceTimeIdSet {
@@ -15,34 +15,47 @@ impl SpaceTimeIdSet {
     ///
     /// * `other` - The `SpaceTimeId` to insert.
     pub fn insert(&mut self, other: SpaceTimeId) {
-        //最初はinnnerに突っ込んでよし
         if self.is_empty() {
-            //ZとIに関して粒度の最適化を実施
             self.inner.push(Self::optimal_z(Self::optimal_i(other)));
-
             return;
         }
 
         let mut should_insert = true;
 
         for stid in &self.inner {
-            match stid.containment_relation(&other) {
-                Full => {
+            match relation(*stid, other) {
+                Relation::Equal(v) => {
+                    // 既に包含されている or 完全一致 → 追加不要
                     return;
                 }
-                Partial(overlapping) => {
-                    let mut overlap_set = SpaceTimeIdSet::new();
-                    overlap_set.insert(overlapping);
+                Relation::Subset(existing) => {
+                    //新しいIDが既存のIDを包含している場合、追加が必要なエリアを考えて、計算する
+                    let existing_set = SpaceTimeIdSet::from(existing);
+                    let new_set = SpaceTimeIdSet::from(other);
+                    let difference = new_set & !existing_set;
+                    let result = self.clone() | difference;
+                    self.inner = result.inner;
+                    should_insert = false;
+                    break;
+                }
+                Relation::Superset(existing) => {
+                    //この場合には既存のIDが新しいIDを完全に包含している
+                    return;
+                }
+                Relation::Overlap(intersection) => {
+                    // 部分的に重なる場合
+                    let overlap_set = SpaceTimeIdSet::from(intersection);
 
-                    let tmp2 = SpaceTimeIdSet::from(other.clone());
-                    let difference = (!overlap_set) & tmp2;
+                    let new_set = SpaceTimeIdSet::from(other);
+
+                    let difference = new_set & !overlap_set;
 
                     let result = self.clone() | difference;
                     self.inner = result.inner;
                     should_insert = false;
                     break;
                 }
-                Containment::None => {
+                Relation::Disjoint => {
                     continue;
                 }
             }
@@ -153,9 +166,7 @@ impl SpaceTimeIdSet {
                     return None;
                 }
             }
-            BeforeUnLimitRange(e) => {
-                Self::optimal_f_max_z(LimitRange(0, e), z)
-            }
+            BeforeUnLimitRange(e) => Self::optimal_f_max_z(LimitRange(0, e), z),
             AfterUnLimitRange(s) => {
                 let max = 1i64 << z;
                 Self::optimal_f_max_z(LimitRange(s, max), z)
@@ -175,7 +186,7 @@ impl SpaceTimeIdSet {
     }
 
     //Iに関する最適化を行う関数
-    pub fn optimal_i(other: SpaceTimeId) -> SpaceTimeId {
+    fn optimal_i(other: SpaceTimeId) -> SpaceTimeId {
         let start;
         let end;
 
@@ -216,7 +227,7 @@ impl SpaceTimeIdSet {
     }
 
     //連続最適化を行う関数
-    pub fn optimal_push(&mut self, other: SpaceTimeId) {
+    fn optimal_push(&mut self, other: SpaceTimeId) {
         for stid in &mut self.inner {
             // Zoom level and interval must match to allow merging
             if stid.z() != other.z() || stid.i() != other.i() {
@@ -390,16 +401,12 @@ impl SpaceTimeIdSet {
                         Ok(None)
                     }
                 }
-                AfterUnLimitRange(_) => {
-                    Err("重なりがある値が入力されました".to_string())
-                }
+                AfterUnLimitRange(_) => Err("重なりがある値が入力されました".to_string()),
                 Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },
             BeforeUnLimitRange(_) => match other {
-                BeforeUnLimitRange(_) => {
-                    Err("重なりがある値が入力されました".to_string())
-                }
+                BeforeUnLimitRange(_) => Err("重なりがある値が入力されました".to_string()),
                 Any => Err("重なりがある値が入力されました".to_string()),
                 _ => Self::to_continuous_range(other, target),
             },

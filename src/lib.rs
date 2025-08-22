@@ -1,8 +1,8 @@
 //! # Kasane Logic
 //!
-//! **Kasane Logic** is a Rust library that extends the 4-dimensional spatial information notation 
-//! defined by IPA (Information-technology Promotion Agency) and enables logical operations on 
-//! space-time IDs. The calculations are implemented using pure Rust functions, and operate 
+//! **Kasane Logic** is a Rust library that extends the 4-dimensional spatial information notation
+//! defined by IPA (Information-technology Promotion Agency) and enables logical operations on
+//! space-time IDs. The calculations are implemented using pure Rust functions, and operate
 //! correctly and efficiently in any environment without external dependencies.
 //!
 //! ## Features
@@ -27,6 +27,7 @@
 //! let complement = !&set_a;
 //! ```
 
+pub mod function;
 pub mod id;
 pub mod set;
 

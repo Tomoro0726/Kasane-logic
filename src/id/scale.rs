@@ -1,5 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 use std::fmt::Debug;
 use std::ops::{Add, Mul, Sub};
 
@@ -33,7 +33,7 @@ impl SpaceTimeId {
     /// - `i` is less than the current time level
     /// - Internal coefficient conversion fails
 
-    pub fn change_scale(&self, z: Option<u16>, i: Option<u32>) -> Result<Self, String> {
+    pub fn scale(&self, z: Option<u16>, i: Option<u32>) -> Result<Self, String> {
         if z.is_none() && i.is_none() {
             return Ok(self.clone());
         }

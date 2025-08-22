@@ -18,10 +18,7 @@ impl SpaceTimeId {
     /// A `SpaceTimeIdSet` containing the set of IDs that represent the complement space.
     /// Returns an empty SpaceTimeIdSet if the complement is an empty set (e.g., the complement of "everything").
     pub fn complement(&self) -> SpaceTimeIdSet {
-        if self.x == Any
-            && self.y == Any
-            && self.f == Any
-        {
+        if self.x == Any && self.y == Any && self.f == Any {
             return SpaceTimeIdSet::new();
         }
 
@@ -155,22 +152,30 @@ impl SpaceTimeId {
             })
             .collect();
 
+        println!("{:?}", t_inversions);
+
         // 時間軸の補集合を展開
         for ele in tmp {
             match t_inversions.as_slice() {
                 [t1, t2] => {
-                    for t in [t1, t2] {
-                        let id = SpaceTimeId::new(
-                            self.z,
-                            ele.f.expect("f 未設定"),
-                            ele.x.expect("x 未設定"),
-                            ele.y.expect("y 未設定"),
-                            self.i,
-                            *t,
-                        )
+                    let id = SpaceTimeId::new(
+                        self.z,
+                        ele.f.expect("f 未設定"),
+                        ele.x.expect("x 未設定"),
+                        ele.y.expect("y 未設定"),
+                        self.i,
+                        self.t,
+                    )
+                    .expect("補集合 SpaceTimeId の生成に失敗");
+                    result.insert(id);
+
+                    let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t1)
                         .expect("補集合 SpaceTimeId の生成に失敗");
-                        result.insert(id);
-                    }
+                    result.insert(id);
+
+                    let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t2)
+                        .expect("補集合 SpaceTimeId の生成に失敗");
+                    result.insert(id);
                 }
                 [t1] => {
                     let id = SpaceTimeId::new(
@@ -179,13 +184,26 @@ impl SpaceTimeId {
                         ele.x.expect("x 未設定"),
                         ele.y.expect("y 未設定"),
                         self.i,
-                        *t1,
+                        self.t,
                     )
                     .expect("補集合 SpaceTimeId の生成に失敗");
                     result.insert(id);
+
+                    let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t1)
+                        .expect("補集合 SpaceTimeId の生成に失敗");
+                    result.insert(id);
                 }
                 [] => {
-                    // Any の場合は補集合なし
+                    let id = SpaceTimeId::new(
+                        self.z,
+                        ele.f.expect("f 未設定"),
+                        ele.x.expect("x 未設定"),
+                        ele.y.expect("y 未設定"),
+                        self.i,
+                        self.t,
+                    )
+                    .expect("補集合 SpaceTimeId の生成に失敗");
+                    result.insert(id);
                 }
                 _ => panic!("t_inversions の配列長がおかしい！"),
             }
@@ -204,10 +222,7 @@ impl SpaceTimeId {
                 } else if *v == max {
                     vec![LimitRange(0, max - 1)]
                 } else {
-                    vec![
-                        LimitRange(0, v - 1),
-                        LimitRange(v + 1, max),
-                    ]
+                    vec![LimitRange(0, v - 1), LimitRange(v + 1, max)]
                 }
             }
             LimitRange(s, e) => {
@@ -249,10 +264,7 @@ impl SpaceTimeId {
                 } else if *v == max {
                     vec![LimitRange(min, max - 1)]
                 } else {
-                    vec![
-                        LimitRange(min, v - 1),
-                        LimitRange(v + 1, max),
-                    ]
+                    vec![LimitRange(min, v - 1), LimitRange(v + 1, max)]
                 }
             }
             LimitRange(s, e) => {
@@ -290,10 +302,7 @@ impl SpaceTimeId {
                 if *v == 0 {
                     vec![AfterUnLimitRange(1)]
                 } else {
-                    vec![
-                        LimitRange(0, v - 1),
-                        AfterUnLimitRange(v + 1),
-                    ]
+                    vec![LimitRange(0, v - 1), AfterUnLimitRange(v + 1)]
                 }
             }
             LimitRange(s, e) => {
