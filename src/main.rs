@@ -1,42 +1,32 @@
 use kasane_logic::{
-    id::{
-        self,
-        DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
-        SpaceTimeId,
-        relation::relation,
+    function::{
+        ecef::point_to_ecef::{self, point_to_ecef},
+        line::{self},
     },
-    set::SpaceTimeIdSet,
+    id::coordinates::Point,
 };
 
 fn main() {
-    let id = SpaceTimeId::new(
-        3,
-        LimitRange(1, 1),
-        LimitRange(1, 2),
-        LimitRange(1, 3),
-        0,
-        Any,
-    )
-    .unwrap();
+    // let a = Point {
+    //     latitude: todo!(),
+    //     longitude: todo!(),
+    //     altitude: todo!(),
+    // };
+    // let b = Point {
+    //     latitude: todo!(),
+    //     longitude: todo!(),
+    //     altitude: todo!(),
+    // };
 
-    let id2 = SpaceTimeId::new(
-        3,
-        LimitRange(1, 1),
-        LimitRange(1, 2),
-        LimitRange(1, 6),
-        30,
-        LimitRange(1, 4),
-    )
-    .unwrap();
+    // let result = line(a, b);
 
-    println!("{}", id2);
-    println!("{}", id2.complement());
-    //println!("{:?}", relation(id, id2));
+    // println!("{}", result);
 
-    // let mut set = SpaceTimeIdSet::from(id);
-    // // let mut set2 = SpaceTimeIdSet::from(id2);
+    let point = Point {
+        latitude: 139.4,
+        longitude: 135.4,
+        altitude: 100.0,
+    };
 
-    // set.insert(id2);
-
-    // println!("MAIN {}", set);
+    println!("{:?}", point_to_ecef(point));
 }
