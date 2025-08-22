@@ -1,32 +1,38 @@
+use std::any::Any;
+
 use kasane_logic::{
     function::{
         ecef::point_to_ecef::{self, point_to_ecef},
         line::{self},
     },
-    id::coordinates::Point,
+    id::{DimensionRange, SpaceTimeId, coordinates::Point},
+    set::SpaceTimeIdSet,
 };
 
 fn main() {
-    // let a = Point {
-    //     latitude: todo!(),
-    //     longitude: todo!(),
-    //     altitude: todo!(),
-    // };
-    // let b = Point {
-    //     latitude: todo!(),
-    //     longitude: todo!(),
-    //     altitude: todo!(),
-    // };
+    let id = SpaceTimeId::new(
+        4,
+        DimensionRange::Single(3),
+        DimensionRange::Single(2),
+        DimensionRange::LimitRange(1, 2),
+        3,
+        DimensionRange::LimitRange(1, 2),
+    )
+    .unwrap();
 
-    // let result = line(a, b);
+    let id2 = SpaceTimeId::new(
+        4,
+        DimensionRange::Single(3),
+        DimensionRange::Single(2),
+        DimensionRange::LimitRange(1, 2),
+        3,
+        DimensionRange::LimitRange(3, 4),
+    )
+    .unwrap();
 
-    // println!("{}", result);
+    let mut set1 = SpaceTimeIdSet::from(id);
 
-    let point = Point {
-        latitude: 139.4,
-        longitude: 135.4,
-        altitude: 100.0,
-    };
+    set1.insert(id2);
 
-    println!("{:?}", point_to_ecef(point));
+    println!("{}", set1);
 }

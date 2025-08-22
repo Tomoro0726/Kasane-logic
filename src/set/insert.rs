@@ -40,22 +40,15 @@ impl SpaceTimeIdSet {
                 }
                 Relation::Superset(existing) => {
                     //この場合には既存のIDが新しいIDを完全に包含している
-                    println!("Superset");
                     return;
                 }
                 Relation::Overlap(intersection) => {
                     // 部分的に重なる場合
                     let overlap_set = SpaceTimeIdSet::from(intersection);
 
-                    println!("INTER {}", overlap_set.clone());
-
                     let new_set = SpaceTimeIdSet::from(other);
 
-                    println!("OTHER {}", other);
-
                     let difference = new_set & !overlap_set;
-
-                    println!("DIFF  {}", difference);
 
                     let result = self.clone() | difference;
                     self.inner = result.inner;

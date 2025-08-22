@@ -37,16 +37,8 @@ pub fn relation(a: SpaceTimeId, b: SpaceTimeId) -> Relation {
         a.i.min(b.i)
     };
 
-    //時空間IDと空間IDを比較したときにバグが発生する
-    //空間IDを時空間IDにsclaedしたい
-
-    // println!("A{}", a);
-    // println!("B{}", b);
-
-    // println!("TARGET I {}", target_i);
-
-    let a_scaled = a.change_scale(Some(target_z), Some(target_i)).unwrap();
-    let b_scaled = b.change_scale(Some(target_z), Some(target_i)).unwrap();
+    let a_scaled = a.scale(Some(target_z), Some(target_i)).unwrap();
+    let b_scaled = b.scale(Some(target_z), Some(target_i)).unwrap();
 
     // 各次元で交差を求める
     let f = match same_level_dimension_intersection(a_scaled.f, b_scaled.f) {
