@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use kasane_logic::{
     function::{
         ecef::{
@@ -7,18 +5,44 @@ use kasane_logic::{
             ecef_to_point::ecef_to_point,
             point_to_ecef::{self},
         },
-        line::{self},
+        line::line,
     },
     id::{DimensionRange, SpaceTimeId, coordinates::Point},
     set::SpaceTimeIdSet,
 };
+use std::fs::File;
+use std::io::{BufWriter, Write};
 
-fn main() {
-    let test = ECEF {
-        x: 11111111.0,
-        y: 11111111.0,
-        z: 11111111.0,
+fn main() -> std::io::Result<()> {
+    let a = Point {
+        latitude: 35.6809591,
+        longitude: 139.7673068,
+        altitude: 100.0,
     };
 
-    println!("{:?}", ecef_to_point(test));
+    let b = Point {
+        latitude: 35.6291112,
+        longitude: 139.7389313,
+        altitude: 100.0,
+    };
+
+    let result = line(24, a, b);
+
+    // ファイルを作成
+    let file = File::create("voxels.txt")?;
+    let mut writer = BufWriter::new(file);
+
+    for ele in result {
+        let line_str = format!("{},\n", ele);
+
+        // コンソール出力
+
+        // ファイル出力
+        writer.write_all(line_str.as_bytes())?;
+    }
+
+    // バッファをフラッシュ
+    writer.flush()?;
+
+    Ok(())
 }
