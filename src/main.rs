@@ -2,7 +2,11 @@ use std::any::Any;
 
 use kasane_logic::{
     function::{
-        ecef::point_to_ecef::{self, point_to_ecef},
+        ecef::{
+            ECEF,
+            ecef_to_point::ecef_to_point,
+            point_to_ecef::{self},
+        },
         line::{self},
     },
     id::{DimensionRange, SpaceTimeId, coordinates::Point},
@@ -10,29 +14,11 @@ use kasane_logic::{
 };
 
 fn main() {
-    let id = SpaceTimeId::new(
-        4,
-        DimensionRange::Single(3),
-        DimensionRange::Single(2),
-        DimensionRange::LimitRange(1, 2),
-        3,
-        DimensionRange::LimitRange(1, 2),
-    )
-    .unwrap();
+    let test = ECEF {
+        x: 11111111.0,
+        y: 11111111.0,
+        z: 11111111.0,
+    };
 
-    let id2 = SpaceTimeId::new(
-        4,
-        DimensionRange::Single(3),
-        DimensionRange::Single(2),
-        DimensionRange::LimitRange(1, 2),
-        3,
-        DimensionRange::LimitRange(3, 4),
-    )
-    .unwrap();
-
-    let mut set1 = SpaceTimeIdSet::from(id);
-
-    set1.insert(id2);
-
-    println!("{}", set1);
+    println!("{:?}", ecef_to_point(test));
 }
