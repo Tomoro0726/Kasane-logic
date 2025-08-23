@@ -55,12 +55,13 @@ pub fn benchmark<F: Fn(&SpaceTimeIdSet,&SpaceTimeIdSet) -> SpaceTimeIdSet>(zoom_
     let ns = zoom_level_bench.iter().sum::<i64>() as f64;
 
     // Markdownファイルに追記
-    let path = Path::new("Benchmark_history.md");
+    let path_str = format!("benchmark_history/{}.md", name);
+    let path = Path::new(&path_str);
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(path)
-        .expect("Failed to open Benchmark_history.md");
+        .expect("Failed to open file");
 
     if path.metadata().unwrap().len() == 0 {
         writeln!(file, "# Benchmark History for `SpaceTimeIdSet &`\n").unwrap();
