@@ -1,38 +1,55 @@
-use std::any::Any;
-
 use kasane_logic::{
     function::{
-        ecef::point_to_ecef::{self, point_to_ecef},
-        line::{self},
+        line::line,
+        tools::{
+            ECEF,
+            ecef_to_point::ecef_to_point,
+            point_to_ecef::{self},
+        },
+        triangle::triangle,
     },
     id::{DimensionRange, SpaceTimeId, coordinates::Point},
     set::SpaceTimeIdSet,
 };
+use std::fs::File;
+use std::io::{BufWriter, Write};
 
-fn main() {
-    let id = SpaceTimeId::new(
-        4,
-        DimensionRange::Single(3),
-        DimensionRange::Single(2),
-        DimensionRange::LimitRange(1, 2),
-        3,
-        DimensionRange::LimitRange(1, 2),
-    )
-    .unwrap();
+fn main() -> std::io::Result<()> {
+    let a = Point {
+        latitude: 35.6809591,
+        longitude: 139.7673068,
+        altitude: 1000.0,
+    };
 
-    let id2 = SpaceTimeId::new(
-        4,
-        DimensionRange::Single(3),
-        DimensionRange::Single(2),
-        DimensionRange::LimitRange(1, 2),
-        3,
-        DimensionRange::LimitRange(3, 4),
-    )
-    .unwrap();
+    let b = Point {
+        latitude: 35.6291112,
+        longitude: 138.7389313,
+        altitude: 100.0,
+    };
 
-    let mut set1 = SpaceTimeIdSet::from(id);
+    let c = Point {
+        latitude: 35.2291112,
+        longitude: 139.7089313,
+        altitude: 10000.0,
+    };
 
-    set1.insert(id2);
+    let result = triangle(15, a, b, c);
 
-    println!("{}", set1);
+    // ファイルを作成
+    let file = File::create("voxels.txt")?;
+    let mut writer = BufWriter::new(file);
+
+    for ele in result.pure() {
+        let line_str = format!("{},\n", ele);
+
+        // コンソール出力
+
+        // ファイル出力
+        writer.write_all(line_str.as_bytes())?;
+    }
+
+    // バッファをフラッシュ
+    writer.flush()?;
+
+    Ok(())
 }

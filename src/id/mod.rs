@@ -16,7 +16,7 @@ pub mod with;
     feature = "serde_support",
     derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)
 )]
-#[derive(Debug, Clone, PartialEq, Copy)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub enum DimensionRange<T> {
     /// A closed range with a start and end value (e.g., 5:10).
     LimitRange(T, T),
@@ -90,6 +90,7 @@ where
     feature = "serde_support",
     derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)
 )]
+#[derive(Hash, Eq, PartialOrd, Ord)]
 pub struct SpaceTimeId {
     z: u16,
     f: DimensionRange<i64>,
