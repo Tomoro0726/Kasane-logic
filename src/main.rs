@@ -1,11 +1,11 @@
 use kasane_logic::{
     function::{
-        ecef::{
+        line::line,
+        tools::{
             ECEF,
             ecef_to_point::ecef_to_point,
             point_to_ecef::{self},
         },
-        line::line,
     },
     id::{DimensionRange, SpaceTimeId, coordinates::Point},
     set::SpaceTimeIdSet,

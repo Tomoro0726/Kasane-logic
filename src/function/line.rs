@@ -1,5 +1,5 @@
 use crate::{
-    function::ecef::point_to_id::point_to_id,
+    function::tools::point_to_id::point_to_id,
     id::{SpaceTimeId, coordinates::Point},
 };
 use std::collections::HashSet;
