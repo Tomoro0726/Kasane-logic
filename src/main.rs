@@ -30,7 +30,7 @@ fn main() -> std::io::Result<()> {
     let c = Point {
         latitude: 35.2291112,
         longitude: 139.7089313,
-        altitude: 100.0,
+        altitude: 10000.0,
     };
 
     let result = triangle(15, a, b, c);
