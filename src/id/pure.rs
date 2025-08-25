@@ -25,12 +25,12 @@ impl SpaceTimeId {
         let z = self.z();
         let i = self.i();
 
-        let max_xy = (1u64 << z) - 1;
+        let max_xy = (1u32 << z) - 1;
 
-        let max_f = (1i64 << z) - 1;
-        let min_f = -(1i64 << z);
+        let max_f = (1i32 << z) - 1;
+        let min_f = -(1i32 << z);
 
-        let expand_u64 = |range: &DimensionRange<u64>, max: u64| -> Vec<u64> {
+        let expand_u32 = |range: &DimensionRange<u32>, max: u32| -> Vec<u32> {
             match range {
                 Single(v) => vec![*v],
                 LimitRange(s, e) => (*s..=*e).collect(),
@@ -40,7 +40,7 @@ impl SpaceTimeId {
             }
         };
 
-        let expand_i64 = |range: &DimensionRange<i64>, min: i64, max: i64| -> Vec<i64> {
+        let expand_i32 = |range: &DimensionRange<i32>, min: i32, max: i32| -> Vec<i32> {
             match range {
                 Single(v) => vec![*v],
                 LimitRange(s, e) => (*s..=*e).collect(),
@@ -50,9 +50,9 @@ impl SpaceTimeId {
             }
         };
 
-        let x_vals = expand_u64(&self.x(), max_xy);
-        let y_vals = expand_u64(&self.y(), max_xy);
-        let f_vals = expand_i64(&self.f(), min_f, max_f);
+        let x_vals = expand_u32(&self.x(), max_xy);
+        let y_vals = expand_u32(&self.y(), max_xy);
+        let f_vals = expand_i32(&self.f(), min_f, max_f);
 
         let mut result = Vec::new();
 

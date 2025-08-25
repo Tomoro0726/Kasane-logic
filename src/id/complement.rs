@@ -42,9 +42,9 @@ impl SpaceTimeId {
         /// None は未確定の値を意味する
         #[derive(Debug, Clone, Copy)]
         struct FXY {
-            f: Option<DimensionRange<i64>>,
-            x: Option<DimensionRange<u64>>,
-            y: Option<DimensionRange<u64>>,
+            f: Option<DimensionRange<i32>>,
+            x: Option<DimensionRange<u32>>,
+            y: Option<DimensionRange<u32>>,
         }
 
         let mut tmp = Vec::new();
@@ -213,8 +213,8 @@ impl SpaceTimeId {
     }
 
     /// Inverts a spatial dimension range (x or y) for complement calculation.
-    fn split_xy_dimension(dim_range: &DimensionRange<u64>, z: u16) -> Vec<DimensionRange<u64>> {
-        let max = (1u64 << z) - 1;
+    fn split_xy_dimension(dim_range: &DimensionRange<u32>, z: u16) -> Vec<DimensionRange<u32>> {
+        let max = (1u32 << z) - 1;
         match dim_range {
             Single(v) => {
                 if *v == 0 {
@@ -254,9 +254,9 @@ impl SpaceTimeId {
     }
 
     /// Inverts a vertical dimension range (f) for complement calculation.
-    fn split_f_dimension(dim_range: &DimensionRange<i64>, z: u16) -> Vec<DimensionRange<i64>> {
-        let max = (1i64 << z) - 1;
-        let min = -(1i64 << z);
+    fn split_f_dimension(dim_range: &DimensionRange<i32>, z: u16) -> Vec<DimensionRange<i32>> {
+        let max = (1i32 << z) - 1;
+        let min = -(1i32 << z);
         match dim_range {
             Single(v) => {
                 if *v == min {
