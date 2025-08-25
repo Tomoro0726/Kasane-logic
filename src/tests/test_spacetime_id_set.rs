@@ -7,7 +7,7 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
+    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
             Single(f),
@@ -19,7 +19,7 @@ mod tests {
         .unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
+    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
             Single(f),

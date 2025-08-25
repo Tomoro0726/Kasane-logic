@@ -7,7 +7,7 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u64, y: u64, f: i64, i: u32, t: u32) -> SpaceTimeId {
+    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
             Single(f),
@@ -19,7 +19,7 @@ mod tests {
         .unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u64, y: u64, f: i64) -> SpaceTimeId {
+    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
         SpaceTimeId::new(
             z,
             Single(f),
@@ -350,9 +350,9 @@ mod tests {
             assert_eq!(comp_id.i(), id.i()); // Should have same time interval
 
             // Should be valid coordinates for the zoom level
-            let max_xy = (1u64 << comp_id.z()) - 1;
-            let max_f = (1i64 << comp_id.z()) - 1;
-            let min_f = -(1i64 << comp_id.z());
+            let max_xy = (1u32 << comp_id.z()) - 1;
+            let max_f = (1i32 << comp_id.z()) - 1;
+            let min_f = -(1i32 << comp_id.z());
 
             match comp_id.x() {
                 Single(v) => assert!(v <= max_xy),

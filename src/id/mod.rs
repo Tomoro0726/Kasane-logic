@@ -147,9 +147,9 @@ impl SpaceTimeId {
         i: u32,
         t: DimensionRange<u32>,
     ) -> Result<Self, String> {
-        if z >= 32 {
+        if z >= 31 {
             return Err(format!(
-                "Zoom level z must be less than 32 to prevent overflow. Received: {}.",
+                "Zoom level z must be less than 31 to prevent overflow with i32 range. Received: {}.",
                 z
             ));
         }
