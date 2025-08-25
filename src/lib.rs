@@ -33,9 +33,3 @@ pub mod set;
 
 #[cfg(test)]
 pub mod tests;
-
-#[cfg(test)]
-mod test_types {
-    use crate::id::{SpaceTimeId, DimensionRange::Single};
-
-    #[test]
