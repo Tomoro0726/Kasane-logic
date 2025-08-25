@@ -1,38 +1,22 @@
+
 use itertools::iproduct;
 use logic::{id::{DimensionRange, SpaceTimeId}, set::SpaceTimeIdSet};
 
-use crate::benchmark_utils::{measure_benchmark, write_markdown};
+use crate::benchmark_utils::{generate_all_stids, measure_benchmark, write_markdown};
+
+pub const ZOOM_LEVEL:i32 = 1;
+pub const MAX_ROW:i64 = 2_i64.pow(ZOOM_LEVEL as u32) - 1;
 
 ///`benchmark` function make arguments for the benchmark test
 /// and,or,not,xor,eq are all supported operations
 /// insert_test is supported by other function `benchmark_insert`
 //Rは複数の型を許容するため
-pub fn benchmark<F, R>(calculate: F, name: &str, iterations: usize) 
+pub fn benchmark_main<F, R>(calculate: F, name: &str, iterations: usize) 
 where 
     F: Fn(&SpaceTimeIdSet,&SpaceTimeIdSet) -> R,
 {
-    let zoom_level = 1;
     let mut total_benchmark_time = 0;
-    let max_row:i64 = 2_i64.pow(zoom_level as u32) - 1;
-
-    let mut all_stids = Vec::new();
-    //下記で、直積集合にしてloopを回す
-    //すべてのボクセル
-    // for (f,x,y) in iproduct!(-max_row -1..=max_row, 0..=max_row as u64, 0..=max_row as u64) {
-    //f が自然数の物のみ
-    for (f,x,y) in iproduct!(0..=max_row, 0..=max_row as u64, 0..=max_row as u64) {
-        let stid = SpaceTimeId::new(
-            zoom_level as u16,
-            DimensionRange::Single(f),
-            DimensionRange::Single(x),
-            DimensionRange::Single(y),
-            1,
-            DimensionRange::Single(0),
-        ).unwrap();
-
-        all_stids.push(stid);
-
-    }
+    let all_stids = generate_all_stids();
 
     //ビットマスクで全組み合わせを生成
     let total_voxel_count = all_stids.len();
@@ -58,9 +42,12 @@ where
 }
 
 pub fn benchmark_insert() {
-
+    let mut total_benchmark_time = 0;
+    let all_stids = generate_all_stids();
+    
 }
 
 pub fn benchmark_not(){
-
+    let mut total_benchmark_time = 0;
+    let all_stids = generate_all_stids();
 }
