@@ -2,7 +2,7 @@
 use itertools::iproduct;
 use logic::{set::SpaceTimeIdSet};
 
-use crate::benchmark_utils::{generate_all_stids, measure::measure_benchmark_insert, measure_benchmark, write_markdown};
+use crate::benchmark_utils::{generate_all_stids, io::write_markdown, measure::measure_benchmark_insert, measure_benchmark_not, measure_benchmark};
 
 pub const ZOOM_LEVEL:i32 = 1;
 pub const MAX_ROW:i64 = 2_i64.pow(ZOOM_LEVEL as u32) - 1;
@@ -62,6 +62,23 @@ pub fn benchmark_insert(iterations: usize) {
     write_markdown(name, total_benchmark_time as f64);
 }
 
-pub fn benchmark_not(){
-    
+pub fn benchmark_not(iterations: usize){
+    let name = "Complement";
+    let mut total_benchmark_time = 0;
+    let all_stids = generate_all_stids();
+    let total_voxel_count = all_stids.len();
+    if total_voxel_count > 16 {
+        panic!("Too many voxels for benchmark.");
+    }
+    for mask in 0..(1u16 << total_voxel_count) {
+        let mut subset_set = SpaceTimeIdSet::new();
+        for (i, stid) in all_stids.iter().enumerate() {
+            if (mask >> i) & 1 == 1 {
+                subset_set.insert(*stid);
+            }
+        }
+        // 計測
+        total_benchmark_time += measure_benchmark_not(iterations, &subset_set);
+    }
+    write_markdown(name, total_benchmark_time as f64);
 }

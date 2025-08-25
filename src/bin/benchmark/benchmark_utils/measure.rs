@@ -33,3 +33,15 @@ pub fn measure_benchmark_insert(
     duration_sum.as_nanos() / iterations as u128
 }
 
+pub fn measure_benchmark_not(
+    iterations: usize,
+    subset_set: &SpaceTimeIdSet
+) -> u128 {
+    let mut duration_sum = Duration::ZERO;
+    for _ in 0..iterations {
+        let start = Instant::now();
+        let _result = !subset_set;
+        duration_sum += start.elapsed();
+    }
+    duration_sum.as_nanos() / iterations as u128
+}

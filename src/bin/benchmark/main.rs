@@ -9,6 +9,6 @@ fn main() {
     benchmark_main(target_functions::or, "Union",3);
     benchmark_main(target_functions::xor, "Symmetric Difference",1);
     benchmark_main(target_functions::eq, "Equality",1);
-    // benchmark_not();
+    benchmark_not(1);
     benchmark_insert(1);
 }
