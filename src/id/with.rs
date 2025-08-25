@@ -37,7 +37,7 @@ impl SpaceTimeId {
     /// # Japanese Note
     /// 
     /// f を変更して検証
-    pub fn with_f(&self, f: DimensionRange<i64>) -> Result<Self, String> {
+    pub fn with_f(&self, f: DimensionRange<i32>) -> Result<Self, String> {
         Self::new(self.z, f, self.x, self.y, self.i, self.t)
     }
 
@@ -57,7 +57,7 @@ impl SpaceTimeId {
     /// # Japanese Note
     /// 
     /// x を変更して検証
-    pub fn with_x(&self, x: DimensionRange<u64>) -> Result<Self, String> {
+    pub fn with_x(&self, x: DimensionRange<u32>) -> Result<Self, String> {
         Self::new(self.z, self.f, x, self.y, self.i, self.t)
     }
 
@@ -77,7 +77,7 @@ impl SpaceTimeId {
     /// # Japanese Note
     /// 
     /// y を変更して検証
-    pub fn with_y(&self, y: DimensionRange<u64>) -> Result<Self, String> {
+    pub fn with_y(&self, y: DimensionRange<u32>) -> Result<Self, String> {
         Self::new(self.z, self.f, self.x, y, self.i, self.t)
     }
 

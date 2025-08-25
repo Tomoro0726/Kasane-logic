@@ -226,9 +226,9 @@ for pure_id in pure_ids {
 
 各次元の値や属性にアクセスするためのゲッターメソッド：
 
-- `f() -> DimensionRange<i64>`：F 次元（高度）の値
-- `x() -> DimensionRange<u64>`：X 次元の値
-- `y() -> DimensionRange<u64>`：Y 次元の値
+- `f() -> DimensionRange<i32>`：F 次元（高度）の値
+- `x() -> DimensionRange<u32>`：X 次元の値
+- `y() -> DimensionRange<u32>`：Y 次元の値
 - `t() -> DimensionRange<u32>`：T 次元（時間インデックス）の値
 - `z() -> u16`：ズームレベル
 - `i() -> u32`：時間間隔（秒）
@@ -367,7 +367,7 @@ let outside = !set;
 
 ### `SpaceTimeId` コンストラクタ
 
-- `new(z: u16, x: DimensionRange<u64>, y: DimensionRange<u64>, f: DimensionRange<i64>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
+- `new(z: u16, f: DimensionRange<i32>, x: DimensionRange<u32>, y: DimensionRange<u32>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
 
 ### `SpaceTimeId` インスタンスメソッド
 
@@ -379,14 +379,14 @@ let outside = !set;
 - `complement() -> SpaceTimeIdSet` - 補集合を取得
 - `pure() -> Vec<SpaceTimeId>` - 範囲次元を個別のSpaceTimeIdに展開
 - `with_z(z: u16) -> Result<SpaceTimeId, String>` - 異なるズームレベルで新しいIDを作成
-- `with_f(f: DimensionRange<i64>) -> Result<SpaceTimeId, String>` - 異なるF次元で新しいIDを作成
-- `with_x(x: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - 異なるX次元で新しいIDを作成
-- `with_y(y: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - 異なるY次元で新しいIDを作成
+- `with_f(f: DimensionRange<i32>) -> Result<SpaceTimeId, String>` - 異なるF次元で新しいIDを作成
+- `with_x(x: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるX次元で新しいIDを作成
+- `with_y(y: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるY次元で新しいIDを作成
 - `with_i(i: u32) -> Result<SpaceTimeId, String>` - 異なる時間間隔で新しいIDを作成
 - `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるT次元で新しいIDを作成
-- `f() -> DimensionRange<i64>` - F 次元の値を取得
-- `x() -> DimensionRange<u64>` - X 次元の値を取得
-- `y() -> DimensionRange<u64>` - Y 次元の値を取得
+- `f() -> DimensionRange<i32>` - F 次元の値を取得
+- `x() -> DimensionRange<u32>` - X 次元の値を取得
+- `y() -> DimensionRange<u32>` - Y 次元の値を取得
 - `t() -> DimensionRange<u32>` - T 次元の値を取得
 - `z() -> u16` - ズームレベルを取得
 - `i() -> u32` - 時間間隔を取得

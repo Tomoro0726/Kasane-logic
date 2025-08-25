@@ -9,7 +9,7 @@ fn bench_spacetimeid_valid_full_range(c: &mut Criterion) {
     c.bench_function("valid: full range (x/y/f = LimitRange)", |b| {
         b.iter(|| {
             let z = black_box(5);
-            let max_xy = (1u64 << z) - 1;
+            let max_xy = (1u32 << z) - 1;
             let x = LimitRange(0, max_xy);
             let y = LimitRange(0, max_xy);
             let f = LimitRange(-16, 15);
@@ -55,9 +55,9 @@ fn bench_spacetimeid_valid_single(c: &mut Criterion) {
 }
 
 fn bench_spacetimeid_invalid_z_overflow(c: &mut Criterion) {
-    c.bench_function("invalid: z overflow (z >= 32)", |b| {
+    c.bench_function("invalid: z overflow (z >= 31)", |b| {
         b.iter(|| {
-            let z = black_box(32);
+            let z = black_box(31);
             let x = Single(0);
             let y = Single(0);
             let f = Single(0);

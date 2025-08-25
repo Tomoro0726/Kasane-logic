@@ -66,8 +66,8 @@ impl SpaceTimeIdSet {
         }
     }
 
-    fn scale_range_for_z_u64(range: DimensionRange<u64>, delta_z: u16) -> DimensionRange<u64> {
-        let scale = u64::from(2_u16.pow(delta_z as u32));
+    fn scale_range_for_z_u32(range: DimensionRange<u32>, delta_z: u16) -> DimensionRange<u32> {
+        let scale = u32::from(2_u16.pow(delta_z as u32));
         match range {
             Single(_) => {
                 panic!("このパターンは上位で除外されているはず");
@@ -79,8 +79,8 @@ impl SpaceTimeIdSet {
         }
     }
 
-    fn scale_range_for_z_i64(range: DimensionRange<i64>, delta_z: u16) -> DimensionRange<i64> {
-        let scale = 2_i64.pow(delta_z as u32);
+    fn scale_range_for_z_i32(range: DimensionRange<i32>, delta_z: u16) -> DimensionRange<i32> {
+        let scale = 2_i32.pow(delta_z as u32);
 
         match range {
             Single(_) => {
@@ -113,9 +113,9 @@ impl SpaceTimeIdSet {
 
         let delta_z = other.z() - max_z;
 
-        let new_x = Self::scale_range_for_z_u64(other.x(), delta_z);
-        let new_y = Self::scale_range_for_z_u64(other.y(), delta_z);
-        let new_f = Self::scale_range_for_z_i64(other.f(), delta_z);
+        let new_x = Self::scale_range_for_z_u32(other.x(), delta_z);
+        let new_y = Self::scale_range_for_z_u32(other.y(), delta_z);
+        let new_f = Self::scale_range_for_z_i32(other.f(), delta_z);
 
         SpaceTimeId::new(max_z, new_f, new_x, new_y, other.i(), other.t()).unwrap()
     }
@@ -147,13 +147,13 @@ impl SpaceTimeIdSet {
         if result == z { None } else { Some(result) }
     }
 
-    /// XY（u64）次元用
-    fn optimal_xy_max_z(range: DimensionRange<u64>, z: u16) -> Option<u16> {
-        Self::optimal_max_z_for_range(range, z, |x| x)
+    /// XY（u32）次元用
+    fn optimal_xy_max_z(range: DimensionRange<u32>, z: u16) -> Option<u16> {
+        Self::optimal_max_z_for_range(range, z, |x| x as u64)
     }
 
-    /// F（i64）次元用
-    fn optimal_f_max_z(range: DimensionRange<i64>, z: u16) -> Option<u16> {
+    /// F（i32）次元用
+    fn optimal_f_max_z(range: DimensionRange<i32>, z: u16) -> Option<u16> {
         match range {
             Single(_) => None,
             LimitRange(s, e) => {
@@ -168,7 +168,7 @@ impl SpaceTimeIdSet {
             }
             BeforeUnLimitRange(e) => Self::optimal_f_max_z(LimitRange(0, e), z),
             AfterUnLimitRange(s) => {
-                let max = 1i64 << z;
+                let max = 1i32 << z;
                 Self::optimal_f_max_z(LimitRange(s, max), z)
             }
             Any => Some(0),
@@ -289,16 +289,16 @@ impl SpaceTimeIdSet {
     }
 
     fn to_continuous_xy(
-        target: DimensionRange<u64>,
-        other: DimensionRange<u64>,
-    ) -> Result<Option<DimensionRange<u64>>, String> {
+        target: DimensionRange<u32>,
+        other: DimensionRange<u32>,
+    ) -> Result<Option<DimensionRange<u32>>, String> {
         Self::to_continuous_range(target, other)
     }
 
     fn to_continuous_f(
-        target: DimensionRange<i64>,
-        other: DimensionRange<i64>,
-    ) -> Result<Option<DimensionRange<i64>>, String> {
+        target: DimensionRange<i32>,
+        other: DimensionRange<i32>,
+    ) -> Result<Option<DimensionRange<i32>>, String> {
         Self::to_continuous_range(target, other)
     }
 
