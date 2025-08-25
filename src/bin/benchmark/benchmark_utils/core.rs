@@ -7,7 +7,7 @@ use crate::benchmark_utils::{measure_benchmark, write_markdown};
 /// and,or,not,xor,eq are all supported operations
 /// insert_test is supported by other function `benchmark_insert`
 //Rは複数の型を許容するため
-pub fn benchmark<F, R>(calculate: F, name: &str) 
+pub fn benchmark<F, R>(calculate: F, name: &str, iterations: usize) 
 where 
     F: Fn(&SpaceTimeIdSet,&SpaceTimeIdSet) -> R,
 {
@@ -51,7 +51,7 @@ where
             }
         }
         // 計測
-        total_benchmark_time += measure_benchmark(&calculate, &subset_set_a, &subset_set_b);
+        total_benchmark_time += measure_benchmark(&calculate,iterations, &subset_set_a, &subset_set_b);
     }
     // Markdownファイルに追記
     write_markdown(name, total_benchmark_time as f64);

@@ -1,5 +1,4 @@
 use std::{fs::OpenOptions, io::Write, path::Path};
-use chrono::Local;
 
 pub fn write_markdown(name: &str,ns: f64) {
     let now = chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
