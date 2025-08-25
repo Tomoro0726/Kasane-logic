@@ -222,9 +222,9 @@ for pure_id in pure_ids {
 
 Getter methods for accessing values and attributes of each dimension:
 
-- `f() -> DimensionRange<i64>`: F dimension (altitude) value
-- `x() -> DimensionRange<u64>`: X dimension value
-- `y() -> DimensionRange<u64>`: Y dimension value
+- `f() -> DimensionRange<i32>`: F dimension (altitude) value
+- `x() -> DimensionRange<u32>`: X dimension value
+- `y() -> DimensionRange<u32>`: Y dimension value
 - `t() -> DimensionRange<u32>`: T dimension (time index) value
 - `z() -> u16`: Zoom level
 - `i() -> u32`: Time interval (seconds)
@@ -363,7 +363,7 @@ let outside = !set;
 
 ### `SpaceTimeId` Constructor
 
-- `new(z: u16, x: DimensionRange<u64>, y: DimensionRange<u64>, f: DimensionRange<i64>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
+- `new(z: u16, f: DimensionRange<i32>, x: DimensionRange<u32>, y: DimensionRange<u32>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
 
 ### `SpaceTimeId` Instance Methods
 
@@ -375,14 +375,14 @@ let outside = !set;
 - `complement() -> SpaceTimeIdSet` - Get complement set
 - `pure() -> Vec<SpaceTimeId>` - Expand range dimensions to individual SpaceTimeIds
 - `with_z(z: u16) -> Result<SpaceTimeId, String>` - Create new ID with different zoom level
-- `with_f(f: DimensionRange<i64>) -> Result<SpaceTimeId, String>` - Create new ID with different F dimension
-- `with_x(x: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - Create new ID with different X dimension
-- `with_y(y: DimensionRange<u64>) -> Result<SpaceTimeId, String>` - Create new ID with different Y dimension
+- `with_f(f: DimensionRange<i32>) -> Result<SpaceTimeId, String>` - Create new ID with different F dimension
+- `with_x(x: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different X dimension
+- `with_y(y: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different Y dimension
 - `with_i(i: u32) -> Result<SpaceTimeId, String>` - Create new ID with different time interval
 - `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different T dimension
-- `f() -> DimensionRange<i64>` - Get F dimension value
-- `x() -> DimensionRange<u64>` - Get X dimension value
-- `y() -> DimensionRange<u64>` - Get Y dimension value
+- `f() -> DimensionRange<i32>` - Get F dimension value
+- `x() -> DimensionRange<u32>` - Get X dimension value
+- `y() -> DimensionRange<u32>` - Get Y dimension value
 - `t() -> DimensionRange<u32>` - Get T dimension value
 - `z() -> u16` - Get zoom level
 - `i() -> u32` - Get time interval
