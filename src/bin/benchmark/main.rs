@@ -10,5 +10,5 @@ fn main() {
     benchmark_main(target_functions::xor, "Symmetric Difference",1);
     benchmark_main(target_functions::eq, "Equality",1);
     // benchmark_not();
-    // benchmark_insert();
+    benchmark_insert(1);
 }

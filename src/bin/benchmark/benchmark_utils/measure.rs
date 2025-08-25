@@ -1,5 +1,5 @@
 use std::time::{Duration, Instant};
-use logic::set::SpaceTimeIdSet;
+use logic::{id::SpaceTimeId, set::SpaceTimeIdSet};
 
 pub fn measure_benchmark<F, R>(
     calculate: F,
@@ -18,3 +18,18 @@ where
     }
     duration_sum.as_nanos() / iterations as u128
 }
+
+pub fn measure_benchmark_insert(
+    iterations: usize,
+    subset_set: &mut SpaceTimeIdSet,
+    stid: &SpaceTimeId
+) -> u128{
+    let mut duration_sum = Duration::ZERO;
+    for _ in 0..iterations {
+        let start = Instant::now();
+        subset_set.insert(*stid);
+        duration_sum += start.elapsed();
+    }
+    duration_sum.as_nanos() / iterations as u128
+}
+

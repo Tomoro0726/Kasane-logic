@@ -1,7 +1,7 @@
 use logic::{set::SpaceTimeIdSet};
 
 /// Target functions for benchmarking set operations
-/// 'benchmark' measures the performance of each function below
+/// 'benchmark_main' measures the performance of each function below
 pub fn and(set1: &SpaceTimeIdSet, set2: &SpaceTimeIdSet) -> SpaceTimeIdSet {
   set1 & set2
 }
