@@ -2,7 +2,7 @@
 use itertools::iproduct;
 use logic::{set::SpaceTimeIdSet};
 
-use crate::benchmark_utils::{generate_all_single_stids, io::write_markdown, measure::measure_benchmark_insert, measure_benchmark_not, measure_benchmark};
+use crate::benchmark_utils::{generate_all_range_stids, generate_all_single_stids, write_markdown, measure_benchmark_insert, measure_benchmark, measure_benchmark_not};
 
 pub const ZOOM_LEVEL:i32 = 1;
 pub const MAX_ROW:i64 = 2_i64.pow(ZOOM_LEVEL as u32) - 1;
@@ -44,20 +44,21 @@ where
 pub fn benchmark_insert(iterations: usize) {
     let name = "insert";
     let mut total_benchmark_time = 0;
-    let all_stids = generate_all_single_stids();
-    let total_voxel_count = all_stids.len();
+    let all_single_stids = generate_all_single_stids();
+    let all_range_stids = generate_all_range_stids();
+    let total_voxel_count = all_single_stids.len();
     if total_voxel_count > 16 {
         panic!("Too many voxels for benchmark.");
     }
-    for (mask_a, stid) in iproduct!(0..(1u16 << total_voxel_count), all_stids.iter()) {
+    for (mask_a, range_stid) in iproduct!(0..(1u16 << total_voxel_count), all_range_stids.iter()) {
         let mut subset_set_a = SpaceTimeIdSet::new();
-        for (i, stid_to_add) in all_stids.iter().enumerate() {
+        for (i, stid_to_add) in all_single_stids.iter().enumerate() {
             if (mask_a >> i) & 1 == 1 {
                 subset_set_a.insert(*stid_to_add);
             }
         }
         // 計測
-        total_benchmark_time += measure_benchmark_insert(iterations, &mut subset_set_a, stid);
+        total_benchmark_time += measure_benchmark_insert(iterations, &mut subset_set_a, range_stid);
     }
     write_markdown(name, total_benchmark_time as f64);
 }
