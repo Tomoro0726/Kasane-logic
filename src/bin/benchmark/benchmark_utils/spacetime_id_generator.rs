@@ -2,7 +2,7 @@ use itertools::iproduct;
 use logic::id::{DimensionRange, SpaceTimeId};
 use crate::benchmark_utils::core::{MAX_ROW, ZOOM_LEVEL};
 
-pub fn generate_all_stids() -> Vec<SpaceTimeId> {
+pub fn generate_all_single_stids() -> Vec<SpaceTimeId> {
   let mut all_stids = Vec::new();
         //下記で、直積集合にしてloopを回す
         //すべてのボクセル

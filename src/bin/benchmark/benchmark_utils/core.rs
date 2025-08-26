@@ -2,7 +2,7 @@
 use itertools::iproduct;
 use logic::{set::SpaceTimeIdSet};
 
-use crate::benchmark_utils::{generate_all_stids, io::write_markdown, measure::measure_benchmark_insert, measure_benchmark_not, measure_benchmark};
+use crate::benchmark_utils::{generate_all_single_stids, io::write_markdown, measure::measure_benchmark_insert, measure_benchmark_not, measure_benchmark};
 
 pub const ZOOM_LEVEL:i32 = 1;
 pub const MAX_ROW:i64 = 2_i64.pow(ZOOM_LEVEL as u32) - 1;
@@ -16,7 +16,7 @@ where
     F: Fn(&SpaceTimeIdSet,&SpaceTimeIdSet) -> R,
 {
     let mut total_benchmark_time = 0;
-    let all_stids = generate_all_stids();
+    let all_stids = generate_all_single_stids();
 
     //ビットマスクで全組み合わせを生成
     let total_voxel_count = all_stids.len();
@@ -44,7 +44,7 @@ where
 pub fn benchmark_insert(iterations: usize) {
     let name = "insert";
     let mut total_benchmark_time = 0;
-    let all_stids = generate_all_stids();
+    let all_stids = generate_all_single_stids();
     let total_voxel_count = all_stids.len();
     if total_voxel_count > 16 {
         panic!("Too many voxels for benchmark.");
@@ -65,7 +65,7 @@ pub fn benchmark_insert(iterations: usize) {
 pub fn benchmark_not(iterations: usize){
     let name = "Complement";
     let mut total_benchmark_time = 0;
-    let all_stids = generate_all_stids();
+    let all_stids = generate_all_single_stids();
     let total_voxel_count = all_stids.len();
     if total_voxel_count > 16 {
         panic!("Too many voxels for benchmark.");
