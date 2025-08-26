@@ -12,8 +12,6 @@
 - 和集合（OR）、積集合（AND）、補集合（NOT）、排他的論理和（XOR）などの演算子サポート
 - 実行環境に依存しない軽量な構成
 
-もちろんです。以下が日本語・英語の併記フォーマットです：
-
 ## インストールのオプション
 
 ```toml
@@ -193,20 +191,20 @@ let complement_set = stid.complement();
 println!("補集合: {}", complement_set);
 ```
 
-### 🔍 純粋ID展開
+### 🔍 純粋 ID 展開
 
 #### `pure(&self) -> Vec<SpaceTimeId>`
 
-空間次元（F、X、Y）の全ての範囲記法（Any、LimitRange、BeforeUnLimitRange、AfterUnLimitRange）を、Single値のみを持つ個別のSpaceTimeIdに展開します。時間次元（T）はそのまま保持されます。
+空間次元（F、X、Y）の全ての範囲記法（Any、LimitRange、BeforeUnLimitRange、AfterUnLimitRange）を、Single 値のみを持つ個別の SpaceTimeId に展開します。時間次元（T）はそのまま保持されます。
 
-この関数は、複雑な範囲ベースのSpaceTimeIdを、精密な処理のための具体的で列挙されたSpaceTimeIdに変換する際に便利です。
+この関数は、複雑な範囲ベースの SpaceTimeId を、精密な処理のための具体的で列挙された SpaceTimeId に変換する際に便利です。
 
 ```rust
 // 範囲次元を持つSpaceTimeIdを作成
 let stid = SpaceTimeId::new(
     2,                                    // ズームレベル2
     DimensionRange::LimitRange(0, 1),     // F次元: 0から1まで
-    DimensionRange::LimitRange(1, 2),     // X次元: 1から2まで  
+    DimensionRange::LimitRange(1, 2),     // X次元: 1から2まで
     DimensionRange::Single(0),            // Y次元: 単一値0
     60,                                   // 時間間隔
     DimensionRange::Single(100),          // T次元: 単一値100
@@ -377,13 +375,13 @@ let outside = !set;
 - `change_scale(z: Option<u16>, i: Option<u32>) -> Result<SpaceTimeId, String>` - 解像度を変更
 - `containment_relation(&other: &SpaceTimeId) -> Containment` - 包含関係を確認
 - `complement() -> SpaceTimeIdSet` - 補集合を取得
-- `pure() -> Vec<SpaceTimeId>` - 範囲次元を個別のSpaceTimeIdに展開
-- `with_z(z: u16) -> Result<SpaceTimeId, String>` - 異なるズームレベルで新しいIDを作成
-- `with_f(f: DimensionRange<i32>) -> Result<SpaceTimeId, String>` - 異なるF次元で新しいIDを作成
-- `with_x(x: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるX次元で新しいIDを作成
-- `with_y(y: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるY次元で新しいIDを作成
-- `with_i(i: u32) -> Result<SpaceTimeId, String>` - 異なる時間間隔で新しいIDを作成
-- `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なるT次元で新しいIDを作成
+- `pure() -> Vec<SpaceTimeId>` - 範囲次元を個別の SpaceTimeId に展開
+- `with_z(z: u16) -> Result<SpaceTimeId, String>` - 異なるズームレベルで新しい ID を作成
+- `with_f(f: DimensionRange<i32>) -> Result<SpaceTimeId, String>` - 異なる F 次元で新しい ID を作成
+- `with_x(x: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なる X 次元で新しい ID を作成
+- `with_y(y: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なる Y 次元で新しい ID を作成
+- `with_i(i: u32) -> Result<SpaceTimeId, String>` - 異なる時間間隔で新しい ID を作成
+- `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - 異なる T 次元で新しい ID を作成
 - `f() -> DimensionRange<i32>` - F 次元の値を取得
 - `x() -> DimensionRange<u32>` - X 次元の値を取得
 - `y() -> DimensionRange<u32>` - Y 次元の値を取得
@@ -414,22 +412,22 @@ let outside = !set;
 
 ### 開発手順
 
-1. 本リポジトリをforkする
-1. forkしたリポジトリをcloneする
-1. ローカルで作業用branchを作成
-   - ブランチ名は`<種別>/<短い説明>(-<issue番号>)`issue番号はissueが存在する場合
+1. 本リポジトリを fork する
+1. fork したリポジトリを clone する
+1. ローカルで作業用 branch を作成
+   - ブランチ名は`<種別>/<短い説明>(-<issue番号>)`issue 番号は issue が存在する場合
    - 種別
      - `feat` → 新機能
      - `fix` → バグ修正
      - `docs` → ドキュメント修正
      - `refactor` → リファクタリング
-     - `chore` → 雑務（CI設定、依存パッケージ更新など）
+     - `chore` → 雑務（CI 設定、依存パッケージ更新など）
    - 例:`feat/add-user-login-123`
 1. 開発・commit
-   - commitメッセージは任意の短い説明
-2. GitHubにpush
-3. Pull Request
-   - タイトルはブランチ名を参照し、`[種別] #<issue番号> 短い説明`issue番号はissueが存在する場合
+   - commit メッセージは任意の短い説明
+1. GitHub に push
+1. Pull Request
+   - タイトルはブランチ名を参照し、`[種別] #<issue番号> 短い説明`issue 番号は issue が存在する場合
 
 ## 🧪 テストに関する考え方
 
