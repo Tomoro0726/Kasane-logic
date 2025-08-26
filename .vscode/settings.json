@@ -1,0 +1,10 @@
+{
+  // "rust-analyzer.cargo.features": [
+  //   "wasm"
+  // ],
+  // "rust-analyzer.cargo.noDefaultFeatures": true
+  "rust-analyzer.cargo.features": [
+    "wasm"
+  ],
+  "rust-analyzer.cargo.noDefaultFeatures": true
+}

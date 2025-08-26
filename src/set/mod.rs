@@ -1,6 +1,7 @@
 use crate::id::{DimensionRange, SpaceTimeId};
 pub mod and;
 pub mod equal;
+pub mod from_hash;
 pub mod insert;
 pub mod not;
 pub mod or;

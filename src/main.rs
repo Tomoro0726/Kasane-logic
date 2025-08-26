@@ -11,10 +11,10 @@ use kasane_logic::{
     id::{DimensionRange, SpaceTimeId, coordinates::Point},
     set::SpaceTimeIdSet,
 };
-use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::{fs::File, time::Instant};
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let a = Point {
         latitude: 35.6809591,
         longitude: 139.7673068,
@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
     };
 
     let b = Point {
-        latitude: 35.6291112,
+        latitude: 33.6291112,
         longitude: 138.7389313,
         altitude: 100.0,
     };
@@ -33,23 +33,5 @@ fn main() -> std::io::Result<()> {
         altitude: 10000.0,
     };
 
-    let result = triangle(15, a, b, c);
-
-    // ファイルを作成
-    let file = File::create("voxels.txt")?;
-    let mut writer = BufWriter::new(file);
-
-    for ele in result.pure() {
-        let line_str = format!("{},\n", ele);
-
-        // コンソール出力
-
-        // ファイル出力
-        writer.write_all(line_str.as_bytes())?;
-    }
-
-    // バッファをフラッシュ
-    writer.flush()?;
-
-    Ok(())
+    let result = triangle(30, a, b, c);
 }
