@@ -6,7 +6,7 @@ impl SpaceTimeId {
     ///
     /// # Returns
     ///
-    /// The F coordinate as a `DimensionRange<i64>`, representing the vertical position
+    /// The F coordinate as a `DimensionRange<i32>`, representing the vertical position
     /// or range along the F-axis (altitude).
     ///
     /// # Example
@@ -19,14 +19,14 @@ impl SpaceTimeId {
     /// let f_value = stid.f();
     /// assert_eq!(f_value, Single(5));
     /// ```
-    pub fn f(&self) -> DimensionRange<i64> {
+    pub fn f(&self) -> DimensionRange<i32> {
         self.f
     }
     /// Returns the X dimension value.
     ///
     /// # Returns
     ///
-    /// The X coordinate as a `DimensionRange<u64>`, representing the spatial position
+    /// The X coordinate as a `DimensionRange<u32>`, representing the spatial position
     /// or range along the X-axis.
     ///
     /// # Example
@@ -39,7 +39,7 @@ impl SpaceTimeId {
     /// let x_value = stid.x();
     /// assert_eq!(x_value, Single(3));
     /// ```
-    pub fn x(&self) -> DimensionRange<u64> {
+    pub fn x(&self) -> DimensionRange<u32> {
         self.x
     }
 
@@ -47,7 +47,7 @@ impl SpaceTimeId {
     ///
     /// # Returns
     ///
-    /// The Y coordinate as a `DimensionRange<u64>`, representing the spatial position
+    /// The Y coordinate as a `DimensionRange<u32>`, representing the spatial position
     /// or range along the Y-axis.
     ///
     /// # Example
@@ -60,7 +60,7 @@ impl SpaceTimeId {
     /// let y_value = stid.y();
     /// assert_eq!(y_value, Single(10));
     /// ```
-    pub fn y(&self) -> DimensionRange<u64> {
+    pub fn y(&self) -> DimensionRange<u32> {
         self.y
     }
 

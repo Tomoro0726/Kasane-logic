@@ -29,7 +29,7 @@ impl SpaceTimeId {
     ///
     /// Returns an error if:
     /// - `z` is less than the current zoom level
-    /// - `z >= 32` (to prevent bit overflow)
+    /// - `z >= 31` (to prevent bit overflow with i32 range)
     /// - `i` is less than the current time level
     /// - Internal coefficient conversion fails
 
@@ -46,9 +46,9 @@ impl SpaceTimeId {
                         .to_string(),
                 );
             }
-            if z >= 32 {
+            if z >= 31 {
                 return Err(format!(
-                    "Zoom level z must be less than 32 to prevent overflow. Received: {}.",
+                    "Zoom level z must be less than 31 to prevent overflow with i32 range. Received: {}.",
                     z
                 ));
             }
