@@ -1,1 +1,26 @@
-/targetvoxels.txt
+# === Cargo build artifacts ===
+/target
+**/target
+**/*.rs.bk
+
+# === IDE / Editor ===
+/.idea
+**/.idea
+.vscode/
+**/.vscode/
+*.swp
+*.swo
+*.log
+
+# === OS-specific ===
+.DS_Store
+Thumbs.db
+
+# === Other ===
+/Cargo.lock  # ※ワークスペースにライブラリのみなら基本は無視でOK
+
+# === Test / Temp files ===
+*.tmp
+*.bak
+*.old
+/core/pkg
