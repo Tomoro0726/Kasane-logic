@@ -1,0 +1,36 @@
+name: Run Benchmark and Commit Results
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Run benchmark
+        run: cargo run --bin benchmark
+
+      - name: Commit benchmark results
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add benchmark_history/*.md
+
+          git diff --cached --quiet || git commit -m "Update benchmark results [skip ci]"
+
+          git push
