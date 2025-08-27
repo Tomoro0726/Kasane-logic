@@ -132,10 +132,19 @@ pub fn triangle(z: u16, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
     let end = start.elapsed();
 
     println!("三角形の計算にかかった時間:{:?}ms", end.as_millis());
+    println!("時空間IDの数{}", voxels_set.iter().len());
+    let start = Instant::now();
 
-    let result;
+    let mut result = SpaceTimeIdSet::new();
 
-    unsafe { result = SpaceTimeIdSet::from_hash(voxels_set) };
+    for ele in voxels_set {
+        result.insert(ele);
+    }
+
+    let end = start.elapsed();
+    println!("Insertにかけた時間:{:?}ms", end.as_millis());
+
+    println!("短縮後時空間IDの数{}", result.clone().into_iter().len());
 
     result
 }

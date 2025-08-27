@@ -22,7 +22,7 @@ fn main() {
     };
 
     let b = Point {
-        latitude: 33.6291112,
+        latitude: 30.6291112,
         longitude: 138.7389313,
         altitude: 100.0,
     };
@@ -33,5 +33,5 @@ fn main() {
         altitude: 10000.0,
     };
 
-    let result = triangle(30, a, b, c);
+    let result = triangle(15, a, b, c);
 }

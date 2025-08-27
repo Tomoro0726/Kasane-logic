@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{
     id::{
         DimensionRange::{self, AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
@@ -48,7 +50,7 @@ impl SpaceTimeId {
         }
 
         let mut tmp = Vec::new();
-        let mut result = SpaceTimeIdSet::new();
+        let mut tmp_hash = HashSet::new();
 
         // X の値に関して処理
         match x_inversions.as_slice() {
@@ -167,15 +169,15 @@ impl SpaceTimeId {
                         self.t,
                     )
                     .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
 
                     let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t1)
                         .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
 
                     let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t2)
                         .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
                 }
                 [t1] => {
                     let id = SpaceTimeId::new(
@@ -187,11 +189,11 @@ impl SpaceTimeId {
                         self.t,
                     )
                     .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
 
                     let id = SpaceTimeId::new(1, Any, Any, Any, self.i, *t1)
                         .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
                 }
                 [] => {
                     let id = SpaceTimeId::new(
@@ -203,13 +205,12 @@ impl SpaceTimeId {
                         self.t,
                     )
                     .expect("補集合 SpaceTimeId の生成に失敗");
-                    result.insert(id);
+                    tmp_hash.insert(id);
                 }
                 _ => panic!("t_inversions の配列長がおかしい！"),
             }
         }
-
-        result
+        unsafe { SpaceTimeIdSet::from_hash(tmp_hash) }
     }
 
     /// Inverts a spatial dimension range (x or y) for complement calculation.
