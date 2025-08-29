@@ -288,15 +288,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "libc"
-version = "0.2.175"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
-
-[[package]]
 name = "kasane-logic"
 version = "0.0.1"
-
 dependencies = [
  "chrono",
  "criterion",
@@ -305,6 +298,12 @@ dependencies = [
  "serde",
  "serde_json",
 ]
+
+[[package]]
+name = "libc"
+version = "0.2.175"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
 
 [[package]]
 name = "log"

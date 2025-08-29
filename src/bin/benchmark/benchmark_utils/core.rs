@@ -1,6 +1,6 @@
 
 use itertools::iproduct;
-use logic::{set::SpaceTimeIdSet};
+use kasane_logic::{set::SpaceTimeIdSet};
 
 use crate::benchmark_utils::{generate_all_range_stids, generate_all_single_stids, write_markdown, measure_benchmark_insert, measure_benchmark, measure_benchmark_not};
 

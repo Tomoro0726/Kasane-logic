@@ -1,4 +1,4 @@
-use logic::{set::SpaceTimeIdSet};
+use kasane_logic::{set::SpaceTimeIdSet};
 
 /// Target functions for benchmarking set operations
 /// 'benchmark_main' measures the performance of each function below

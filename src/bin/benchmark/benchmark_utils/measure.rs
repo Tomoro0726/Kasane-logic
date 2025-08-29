@@ -1,5 +1,5 @@
 use std::time::{Duration, Instant};
-use logic::{id::SpaceTimeId, set::SpaceTimeIdSet};
+use kasane_logic::{id::SpaceTimeId, set::SpaceTimeIdSet};
 
 pub fn measure_benchmark<F, R>(
     calculate: F,
