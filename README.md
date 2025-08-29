@@ -191,7 +191,7 @@ println!("Complement: {}", complement_set);
 
 ### 🔍 Pure ID Expansion
 
-#### `to_pure(&self) -> Vec<SpaceTimeId>`
+#### `pure(&self) -> Vec<SpaceTimeId>`
 
 Expands all range notations (Any, LimitRange, BeforeUnLimitRange, AfterUnLimitRange) in the spatial dimensions (F, X, Y) into individual SpaceTimeIds with only Single values. The time dimension (T) is preserved as-is.
 
@@ -209,7 +209,7 @@ let stid = SpaceTimeId::new(
 ).unwrap();
 
 // Expand to pure IDs
-let pure_ids = stid.to_pure();
+let pure_ids = stid.pure();
 println!("Expanded to {} pure IDs", pure_ids.len()); // Will be 4 IDs (2 F values × 2 X values × 1 Y value)
 
 // Each pure ID will have only Single values for F, X, Y dimensions
@@ -222,9 +222,9 @@ for pure_id in pure_ids {
 
 Getter methods for accessing values and attributes of each dimension:
 
-- `f() -> DimensionRange<i64>`: F dimension (altitude) value
-- `x() -> DimensionRange<u64>`: X dimension value
-- `y() -> DimensionRange<u64>`: Y dimension value
+- `f() -> DimensionRange<i32>`: F dimension (altitude) value
+- `x() -> DimensionRange<u32>`: X dimension value
+- `y() -> DimensionRange<u32>`: Y dimension value
 - `t() -> DimensionRange<u32>`: T dimension (time index) value
 - `z() -> u16`: Zoom level
 - `i() -> u32`: Time interval (seconds)
@@ -363,7 +363,7 @@ let outside = !set;
 
 ### `SpaceTimeId` Constructor
 
-- `new(z: u16, x: DimensionRange<u64>, y: DimensionRange<u64>, f: DimensionRange<i64>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
+- `new(z: u16, f: DimensionRange<i32>, x: DimensionRange<u32>, y: DimensionRange<u32>, i: u32, t: DimensionRange<u32>) -> Result<SpaceTimeId, String>`
 
 ### `SpaceTimeId` Instance Methods
 
@@ -373,10 +373,16 @@ let outside = !set;
 - `change_scale(z: Option<u16>, i: Option<u32>) -> Result<SpaceTimeId, String>` - Change resolution
 - `containment_relation(&other: &SpaceTimeId) -> Containment` - Check containment relationship
 - `complement() -> SpaceTimeIdSet` - Get complement set
-- `to_pure() -> Vec<SpaceTimeId>` - Expand range dimensions to individual SpaceTimeIds
-- `f() -> DimensionRange<i64>` - Get F dimension value
-- `x() -> DimensionRange<u64>` - Get X dimension value
-- `y() -> DimensionRange<u64>` - Get Y dimension value
+- `pure() -> Vec<SpaceTimeId>` - Expand range dimensions to individual SpaceTimeIds
+- `with_z(z: u16) -> Result<SpaceTimeId, String>` - Create new ID with different zoom level
+- `with_f(f: DimensionRange<i32>) -> Result<SpaceTimeId, String>` - Create new ID with different F dimension
+- `with_x(x: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different X dimension
+- `with_y(y: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different Y dimension
+- `with_i(i: u32) -> Result<SpaceTimeId, String>` - Create new ID with different time interval
+- `with_t(t: DimensionRange<u32>) -> Result<SpaceTimeId, String>` - Create new ID with different T dimension
+- `f() -> DimensionRange<i32>` - Get F dimension value
+- `x() -> DimensionRange<u32>` - Get X dimension value
+- `y() -> DimensionRange<u32>` - Get Y dimension value
 - `t() -> DimensionRange<u32>` - Get T dimension value
 - `z() -> u16` - Get zoom level
 - `i() -> u32` - Get time interval
@@ -388,6 +394,7 @@ let outside = !set;
 - `insert(&mut self, other: SpaceTimeId)` - Add ID to set
 - `iter() -> impl Iterator<Item = &SpaceTimeId>` - Get iterator
 - `is_empty() -> bool` - Check if set is empty
+- `pure(&self) -> Vec<SpaceTimeId>` - Expand all set elements to pure form
 
 ### `SpaceTimeIdSet` Operators
 

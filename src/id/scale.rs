@@ -1,3 +1,4 @@
+use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::id::{DimensionRange, SpaceTimeId};
 use std::fmt::Debug;
 use std::ops::{Add, Mul, Sub};
@@ -28,11 +29,11 @@ impl SpaceTimeId {
     ///
     /// Returns an error if:
     /// - `z` is less than the current zoom level
-    /// - `z >= 32` (to prevent bit overflow)
+    /// - `z >= 31` (to prevent bit overflow with i32 range)
     /// - `i` is less than the current time level
     /// - Internal coefficient conversion fails
 
-    pub fn change_scale(&self, z: Option<u16>, i: Option<u32>) -> Result<Self, String> {
+    pub fn scale(&self, z: Option<u16>, i: Option<u32>) -> Result<Self, String> {
         if z.is_none() && i.is_none() {
             return Ok(self.clone());
         }
@@ -45,24 +46,17 @@ impl SpaceTimeId {
                         .to_string(),
                 );
             }
-            if z >= 32 {
+            if z >= 31 {
                 return Err(format!(
-                    "Zoom level z must be less than 32 to prevent overflow. Received: {}.",
+                    "Zoom level z must be less than 31 to prevent overflow with i32 range. Received: {}.",
                     z
                 ));
             }
         }
 
-        // Validate interval
-        if let Some(i) = i {
-            if i > self.i {
-                return Err("Target time interval must be a divisor of the current interval and less than or equal to it.".to_string());
-            }
-        }
-
+        let mut f = self.f.clone();
         let mut x = self.x.clone();
         let mut y = self.y.clone();
-        let mut f = self.f.clone();
         let mut t = self.t.clone();
 
         let z = match z {
@@ -84,14 +78,36 @@ impl SpaceTimeId {
         };
 
         let i = match i {
-            Some(i_new) => {
-                if self.i == i_new {
-                    i_new
+            Some(other_i) => {
+                if self.i != 0 && other_i == 0 {
+                    //時空間IDを空間IDに変換しようとしている場合
+                    return Err("時空間IDを空間IDに変換することはできないよ".to_string());
+                } else if self.i == 0 && other_i != 0 {
+                    //空間IDを時空間IDに変換しようとしている場合
+
+                    t = Any;
+                    other_i
+                } else if self.i != 0 && other_i != 0 {
+                    //時空間IDを時空間IDに変換しようとしている場合
+                    //この時、other_iが元のiよりも大きい場合にはエラーを出す
+
+                    if self.i < other_i {
+                        return Err("自分より大きな粒度に変換はできないよ".to_string());
+                    };
+                    if self.i == other_i {
+                        other_i
+                    } else {
+                        //そうでないときは変換がはじめてできる。
+                        let gcd = Self::gcd(other_i, self.i);
+                        let t_coef = self.i / gcd;
+                        t = Self::change_scale_logic(&self.t, &t_coef)?;
+
+                        other_i
+                    }
                 } else {
-                    let gcd = Self::gcd(i_new, self.i);
-                    let t_coef = self.i / gcd;
-                    t = Self::change_scale_logic(&self.t, &t_coef)?;
-                    i_new
+                    //空間IDを空間IDに変換しようとしている場合
+                    t = Any;
+                    other_i
                 }
             }
             None => self.i,
@@ -116,25 +132,25 @@ impl SpaceTimeId {
             .map_err(|e| format!("Failed to convert scale coefficient: {:?}", e))?;
 
         let scaled = match range {
-            DimensionRange::Single(v) => {
+            Single(v) => {
                 let start = *v * k_t;
                 let end = (*v + one) * k_t - one;
-                DimensionRange::LimitRange(start, end)
+                LimitRange(start, end)
             }
-            DimensionRange::LimitRange(s, e) => {
+            LimitRange(s, e) => {
                 let start = *s * k_t;
                 let end = (*e + one) * k_t - one;
-                DimensionRange::LimitRange(start, end)
+                LimitRange(start, end)
             }
-            DimensionRange::AfterUnLimitRange(v) => {
+            AfterUnLimitRange(v) => {
                 let start = *v * k_t;
-                DimensionRange::AfterUnLimitRange(start)
+                AfterUnLimitRange(start)
             }
-            DimensionRange::BeforeUnLimitRange(v) => {
+            BeforeUnLimitRange(v) => {
                 let end = (*v + one) * k_t - one;
-                DimensionRange::BeforeUnLimitRange(end)
+                BeforeUnLimitRange(end)
             }
-            DimensionRange::Any => DimensionRange::Any,
+            Any => Any,
         };
 
         Ok(scaled)
