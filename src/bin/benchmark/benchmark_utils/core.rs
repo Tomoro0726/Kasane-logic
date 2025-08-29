@@ -17,6 +17,7 @@ where
 {
     let mut total_benchmark_time = 0;
     let all_stids = generate_all_single_stids();
+    let mut calculate_count = 0;
 
     //ビットマスクで全組み合わせを生成
     let total_voxel_count = all_stids.len();
@@ -36,9 +37,10 @@ where
         }
         // 計測
         total_benchmark_time += measure_benchmark(&calculate,iterations, &subset_set_a, &subset_set_b);
+        calculate_count += 1;
     }
     // Markdownファイルに追記
-    write_markdown(name, total_benchmark_time as f64);
+    write_markdown(name, total_benchmark_time as f64, calculate_count);
 }
 
 pub fn benchmark_insert(iterations: usize) {
@@ -47,6 +49,7 @@ pub fn benchmark_insert(iterations: usize) {
     let all_single_stids = generate_all_single_stids();
     let all_range_stids = generate_all_range_stids();
     let total_voxel_count = all_single_stids.len();
+    let mut calculate_count = 0;
     if total_voxel_count > 16 {
         panic!("Too many voxels for benchmark.");
     }
@@ -59,8 +62,9 @@ pub fn benchmark_insert(iterations: usize) {
         }
         // 計測
         total_benchmark_time += measure_benchmark_insert(iterations, &mut subset_set_a, range_stid);
+        calculate_count += 1;
     }
-    write_markdown(name, total_benchmark_time as f64);
+    write_markdown(name, total_benchmark_time as f64, calculate_count);
 }
 
 pub fn benchmark_not(iterations: usize){
@@ -68,6 +72,7 @@ pub fn benchmark_not(iterations: usize){
     let mut total_benchmark_time = 0;
     let all_stids = generate_all_single_stids();
     let total_voxel_count = all_stids.len();
+    let mut calculate_count = 0;
     if total_voxel_count > 16 {
         panic!("Too many voxels for benchmark.");
     }
@@ -80,6 +85,7 @@ pub fn benchmark_not(iterations: usize){
         }
         // 計測
         total_benchmark_time += measure_benchmark_not(iterations, &subset_set);
+        calculate_count += 1;
     }
-    write_markdown(name, total_benchmark_time as f64);
+    write_markdown(name, total_benchmark_time as f64, calculate_count);
 }
