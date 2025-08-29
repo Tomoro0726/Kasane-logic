@@ -11,5 +11,4 @@ fn main() {
     benchmark_main(target_functions::eq, "Equality",1);
     benchmark_not(1);
     benchmark_insert(1);
-    
 }
