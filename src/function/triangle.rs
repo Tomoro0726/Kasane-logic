@@ -79,7 +79,7 @@ pub fn triangle(z: u16, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
 
 /// 逐次版 (WASM: wasm feature)
 #[cfg(feature = "wasm")]
-pub fn triangle(z: u16, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
+pub fn triangle(z: u8, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
     use std::{collections::HashSet, time::Instant};
     println!("Triangle Start");
     let start = Instant::now();

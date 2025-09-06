@@ -1,5 +1,5 @@
-use crate::id::SpaceTimeId;
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::SpaceTimeId;
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -7,28 +7,12 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            i,
-            Single(t),
-        )
-        .unwrap()
+    fn create_test_id(z: u8, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), i, Single(t)).unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            0,
-            Any,
-        )
-        .unwrap()
+    fn create_test_id_with_any_t(z: u8, x: u32, y: u32, f: i32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), 0, Any).unwrap()
     }
 
     // Tests for PartialEq implementation - Equal sets
@@ -69,15 +53,7 @@ mod tests {
     #[test]
     fn test_spacetime_idset_equality_equivalent_ranges() {
         // Create two sets that represent the same physical space but with different range representations
-        let range_id = SpaceTimeId::new(
-            2,
-            LimitRange(1, 2),
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        )
-        .unwrap();
+        let range_id = SpaceTimeId::new(2, LimitRange(1, 2), Single(1), Single(0), 0, Any).unwrap();
 
         let mut point_set = SpaceTimeIdSet::new();
         let point1 = create_test_id_with_any_t(2, 1, 1, 0);
@@ -131,26 +107,12 @@ mod tests {
     #[test]
     fn test_spacetime_idset_inequality_subset_relationship() {
         // Create a larger range
-        let large_id = SpaceTimeId::new(
-            2,
-            LimitRange(0, 3),
-            LimitRange(0, 3),
-            Single(0),
-            0,
-            Any,
-        )
-        .unwrap();
+        let large_id =
+            SpaceTimeId::new(2, LimitRange(0, 3), LimitRange(0, 3), Single(0), 0, Any).unwrap();
 
         // Create a smaller range that's contained in the larger one
-        let small_id = SpaceTimeId::new(
-            2,
-            LimitRange(1, 2),
-            LimitRange(1, 2),
-            Single(0),
-            0,
-            Any,
-        )
-        .unwrap();
+        let small_id =
+            SpaceTimeId::new(2, LimitRange(1, 2), LimitRange(1, 2), Single(0), 0, Any).unwrap();
 
         let large_set = SpaceTimeIdSet::from(large_id);
         let small_set = SpaceTimeIdSet::from(small_id);
@@ -241,25 +203,11 @@ mod tests {
     // Tests for equality edge cases
     #[test]
     fn test_spacetime_idset_equality_with_ranges() {
-        let range_id1 = SpaceTimeId::new(
-            2,
-            LimitRange(1, 2),
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        )
-        .unwrap();
+        let range_id1 =
+            SpaceTimeId::new(2, LimitRange(1, 2), Single(1), Single(0), 0, Any).unwrap();
 
-        let range_id2 = SpaceTimeId::new(
-            2,
-            LimitRange(1, 2),
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        )
-        .unwrap();
+        let range_id2 =
+            SpaceTimeId::new(2, LimitRange(1, 2), Single(1), Single(0), 0, Any).unwrap();
 
         let set1 = SpaceTimeIdSet::from(range_id1);
         let set2 = SpaceTimeIdSet::from(range_id2);
@@ -269,25 +217,9 @@ mod tests {
 
     #[test]
     fn test_spacetime_idset_equality_with_any_dimensions() {
-        let any_id1 = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let any_id1 = SpaceTimeId::new(2, Any, Any, Any, 0, Any).unwrap();
 
-        let any_id2 = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let any_id2 = SpaceTimeId::new(2, Any, Any, Any, 0, Any).unwrap();
 
         let set1 = SpaceTimeIdSet::from(any_id1);
         let set2 = SpaceTimeIdSet::from(any_id2);

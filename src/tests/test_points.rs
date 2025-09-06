@@ -1,5 +1,5 @@
-use crate::id::SpaceTimeId;
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::SpaceTimeId;
 
 #[cfg(test)]
 mod tests {
@@ -8,16 +8,8 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            0,
-            Any,
-        )
-        .unwrap()
+    fn create_test_id(z: u8, x: u32, y: u32, f: i32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), 0, Any).unwrap()
     }
 
     // Tests for Point struct
@@ -90,15 +82,7 @@ mod tests {
 
     #[test]
     fn test_center_with_any_dimensions() {
-        let id = SpaceTimeId::new(
-            2,
-            Any,
-            Single(1),
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Any, Single(1), Any, 0, Any).unwrap();
 
         let center = id.center();
 
@@ -259,15 +243,7 @@ mod tests {
 
     #[test]
     fn test_vertex_with_any_dimensions() {
-        let id = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Any, Any, Any, 0, Any).unwrap();
 
         let vertices = id.vertex();
 

@@ -66,7 +66,7 @@ impl SpaceTimeIdSet {
         }
     }
 
-    fn scale_range_for_z_u32(range: DimensionRange<u32>, delta_z: u16) -> DimensionRange<u32> {
+    fn scale_range_for_z_u32(range: DimensionRange<u32>, delta_z: u8) -> DimensionRange<u32> {
         let scale = u32::from(2_u16.pow(delta_z as u32));
         match range {
             Single(_) => {
@@ -79,7 +79,7 @@ impl SpaceTimeIdSet {
         }
     }
 
-    fn scale_range_for_z_i32(range: DimensionRange<i32>, delta_z: u16) -> DimensionRange<i32> {
+    fn scale_range_for_z_i32(range: DimensionRange<i32>, delta_z: u8) -> DimensionRange<i32> {
         let scale = 2_i32.pow(delta_z as u32);
 
         match range {
@@ -122,7 +122,7 @@ impl SpaceTimeIdSet {
 
     /// その次元範囲に対する最適ZoomLevelを計算する（z: `u16`, 戻り値: `Option<u16>`）
     /// 最適値が今と同じ場合はNoneを返す
-    fn optimal_max_z_for_range<T, F>(range: DimensionRange<T>, z: u16, to_u64: F) -> Option<u16>
+    fn optimal_max_z_for_range<T, F>(range: DimensionRange<T>, z: u8, to_u64: F) -> Option<u8>
     where
         F: Fn(T) -> u64,
     {
@@ -148,12 +148,12 @@ impl SpaceTimeIdSet {
     }
 
     /// XY（u32）次元用
-    fn optimal_xy_max_z(range: DimensionRange<u32>, z: u16) -> Option<u16> {
+    fn optimal_xy_max_z(range: DimensionRange<u32>, z: u8) -> Option<u8> {
         Self::optimal_max_z_for_range(range, z, |x| x as u64)
     }
 
     /// F（i32）次元用
-    fn optimal_f_max_z(range: DimensionRange<i32>, z: u16) -> Option<u16> {
+    fn optimal_f_max_z(range: DimensionRange<i32>, z: u8) -> Option<u8> {
         match range {
             Single(_) => None,
             LimitRange(s, e) => {
@@ -176,8 +176,8 @@ impl SpaceTimeIdSet {
     }
 
     /// その数が2で何回割れるかを返す（戻り値: u16）
-    fn count_trailing_zeros(mut n: u64) -> u16 {
-        let mut count = 0u16;
+    fn count_trailing_zeros(mut n: u64) -> u8 {
+        let mut count = 0u8;
         while n % 2 == 0 && n != 0 {
             n /= 2;
             count += 1;

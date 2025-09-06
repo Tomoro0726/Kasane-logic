@@ -1,5 +1,5 @@
-use crate::id::SpaceTimeId;
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::SpaceTimeId;
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -7,42 +7,18 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            i,
-            Single(t),
-        )
-        .unwrap()
+    fn create_test_id(z: u8, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), i, Single(t)).unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            0,
-            Any,
-        )
-        .unwrap()
+    fn create_test_id_with_any_t(z: u8, x: u32, y: u32, f: i32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), 0, Any).unwrap()
     }
 
     // Tests for complement() - Cases that should return empty set
     #[test]
     fn test_complement_universal_space() {
-        let id = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Any, Any, Any, 0, Any).unwrap();
 
         let complement = id.complement();
         assert!(complement.is_empty());
@@ -55,7 +31,7 @@ mod tests {
             Single(1),
             Single(1),
             Single(0),
-            60,                  // Non-zero interval
+            60,  // Non-zero interval
             Any, // Any time
         )
         .unwrap();
@@ -66,15 +42,7 @@ mod tests {
 
     #[test]
     fn test_complement_spatial_any_with_time_any() {
-        let id = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            60,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Any, Any, Any, 60, Any).unwrap();
 
         let complement = id.complement();
         assert!(complement.is_empty());
@@ -166,15 +134,7 @@ mod tests {
 
     #[test]
     fn test_complement_after_unlimit_range() {
-        let id = SpaceTimeId::new(
-            2,
-            AfterUnLimitRange(2),
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, AfterUnLimitRange(2), Any, Any, 0, Any).unwrap();
 
         let complement = id.complement();
         assert!(!complement.is_empty());
@@ -182,15 +142,7 @@ mod tests {
 
     #[test]
     fn test_complement_before_unlimit_range() {
-        let id = SpaceTimeId::new(
-            2,
-            BeforeUnLimitRange(1),
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, BeforeUnLimitRange(1), Any, Any, 0, Any).unwrap();
 
         let complement = id.complement();
         assert!(!complement.is_empty());
@@ -291,15 +243,8 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_complement_time_range() {
-        let id = SpaceTimeId::new(
-            2,
-            Single(1),
-            Single(1),
-            Single(0),
-            60,
-            LimitRange(10, 20),
-        )
-        .unwrap();
+        let id =
+            SpaceTimeId::new(2, Single(1), Single(1), Single(0), 60, LimitRange(10, 20)).unwrap();
 
         let complement = id.complement();
         assert!(!complement.is_empty());
@@ -360,9 +305,9 @@ mod tests {
                     assert!(start <= end);
                     assert!(end <= max_xy);
                 }
-                AfterUnLimitRange(_) => {} // Valid by construction
+                AfterUnLimitRange(_) => {}  // Valid by construction
                 BeforeUnLimitRange(_) => {} // Valid by construction
-                Any => {}                  // Valid by construction
+                Any => {}                   // Valid by construction
             }
 
             match comp_id.f() {
@@ -371,9 +316,9 @@ mod tests {
                     assert!(start <= end);
                     assert!(start >= min_f && end <= max_f);
                 }
-                AfterUnLimitRange(_) => {} // Valid by construction
+                AfterUnLimitRange(_) => {}  // Valid by construction
                 BeforeUnLimitRange(_) => {} // Valid by construction
-                Any => {}                  // Valid by construction
+                Any => {}                   // Valid by construction
             }
         }
     }
@@ -421,15 +366,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_complement_multiple_constraints() {
-        let id = SpaceTimeId::new(
-            2,
-            Single(1),
-            Single(1),
-            Single(0),
-            60,
-            Single(10),
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Single(1), Single(1), Single(0), 60, Single(10)).unwrap();
 
         let complement = id.complement();
         assert!(!complement.is_empty());

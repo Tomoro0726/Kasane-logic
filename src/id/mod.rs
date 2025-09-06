@@ -92,7 +92,7 @@ where
 )]
 #[derive(Hash, Eq, PartialOrd, Ord)]
 pub struct SpaceTimeId {
-    z: u16,
+    z: u8,
     f: DimensionRange<i32>,
     x: DimensionRange<u32>,
     y: DimensionRange<u32>,
@@ -140,7 +140,7 @@ impl SpaceTimeId {
     /// - If any range value is outside its valid bounds for the given zoom `z`
     /// - If `t` is not `Any` when `i == 0`
     pub fn new(
-        z: u16,
+        z: u8,
         f: DimensionRange<i32>,
         x: DimensionRange<u32>,
         y: DimensionRange<u32>,
@@ -156,7 +156,7 @@ impl SpaceTimeId {
 
         fn validate_xy_dim(
             dim_val: &DimensionRange<u32>,
-            z: u16,
+            z: u8,
         ) -> Result<DimensionRange<u32>, String> {
             let max = (1u32 << z) - 1;
 
@@ -233,7 +233,7 @@ impl SpaceTimeId {
 
         fn validate_f_dim(
             dim_val: &DimensionRange<i32>,
-            z: u16,
+            z: u8,
         ) -> Result<DimensionRange<i32>, String> {
             let limit = 1i32 << z;
             let max_f = limit - 1;

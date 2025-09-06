@@ -1,5 +1,5 @@
-use crate::id::SpaceTimeId;
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::SpaceTimeId;
 use crate::set::SpaceTimeIdSet;
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 
@@ -8,26 +8,12 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            i,
-            Single(t),
-        ).unwrap()
+    fn create_test_id(z: u8, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), i, Single(t)).unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            0,
-            Any,
-        ).unwrap()
+    fn create_test_id_with_any_t(z: u8, x: u32, y: u32, f: i32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), 0, Any).unwrap()
     }
 
     // Tests for BitAnd (&) operation
@@ -45,7 +31,7 @@ mod tests {
         let set2 = SpaceTimeIdSet::new();
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         set1.insert(id);
-        
+
         let result = &set1 & &set2;
         assert!(result.is_empty());
     }
@@ -55,7 +41,7 @@ mod tests {
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         let set1 = SpaceTimeIdSet::from(id);
         let set2 = SpaceTimeIdSet::from(id);
-        
+
         let result = &set1 & &set2;
         assert!(!result.is_empty());
     }
@@ -66,7 +52,7 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result = &set1 & &set2;
         assert!(result.is_empty());
     }
@@ -76,7 +62,7 @@ mod tests {
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         let set1 = SpaceTimeIdSet::from(id);
         let set2 = SpaceTimeIdSet::from(id);
-        
+
         let result = set1 & set2;
         assert!(!result.is_empty());
     }
@@ -86,10 +72,10 @@ mod tests {
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         let set1 = SpaceTimeIdSet::from(id);
         let set2 = SpaceTimeIdSet::from(id);
-        
+
         let result1 = &set1 & set2;
         let result2 = set1 & &SpaceTimeIdSet::from(id);
-        
+
         assert!(!result1.is_empty());
         assert!(!result2.is_empty());
     }
@@ -109,7 +95,7 @@ mod tests {
         let set2 = SpaceTimeIdSet::new();
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         set1.insert(id);
-        
+
         let result = &set1 | &set2;
         assert_eq!(result.iter().count(), 1);
     }
@@ -119,7 +105,7 @@ mod tests {
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         let set1 = SpaceTimeIdSet::from(id);
         let set2 = SpaceTimeIdSet::from(id);
-        
+
         let result = &set1 | &set2;
         assert_eq!(result.iter().count(), 1); // Should merge identical elements
     }
@@ -130,7 +116,7 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result = &set1 | &set2;
         assert_eq!(result.iter().count(), 2);
     }
@@ -141,7 +127,7 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result = set1 | set2;
         assert_eq!(result.iter().count(), 2);
     }
@@ -152,10 +138,10 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result1 = &set1 | set2;
         let result2 = set1 | &SpaceTimeIdSet::from(id2);
-        
+
         assert_eq!(result1.iter().count(), 2);
         assert_eq!(result2.iter().count(), 2);
     }
@@ -175,11 +161,11 @@ mod tests {
         let set2 = SpaceTimeIdSet::new();
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         set1.insert(id);
-        
+
         let result = &set1 ^ &set2;
         // XOR behavior may vary depending on implementation
         // The key is that it should be consistent
-        
+
         // Test the reverse as well
         let result2 = &set2 ^ &set1;
         // Both should give same result (commutative)
@@ -191,7 +177,7 @@ mod tests {
         let id = create_test_id_with_any_t(2, 1, 1, 0);
         let set1 = SpaceTimeIdSet::from(id);
         let set2 = SpaceTimeIdSet::from(id);
-        
+
         let result = &set1 ^ &set2;
         assert!(result.is_empty()); // XOR of identical sets should be empty
     }
@@ -202,7 +188,7 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result = &set1 ^ &set2;
         assert_eq!(result.iter().count(), 2); // Should contain both elements
     }
@@ -213,7 +199,7 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result = set1 ^ set2;
         assert_eq!(result.iter().count(), 2);
     }
@@ -224,10 +210,10 @@ mod tests {
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         let result1 = &set1 ^ set2;
         let result2 = set1 ^ &SpaceTimeIdSet::from(id2);
-        
+
         assert_eq!(result1.iter().count(), 2);
         assert_eq!(result2.iter().count(), 2);
     }
@@ -265,7 +251,7 @@ mod tests {
         let set = SpaceTimeIdSet::from(id);
         let complement = !&set;
         let double_complement = !complement;
-        
+
         // Double complement should be close to original
         // (exact equality depends on normalization and representation)
     }
@@ -276,15 +262,15 @@ mod tests {
         let id1 = create_test_id_with_any_t(2, 1, 1, 0);
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let id3 = create_test_id_with_any_t(2, 3, 3, 2);
-        
+
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
         let set3 = SpaceTimeIdSet::from(id3);
-        
+
         // Test: (set1 | set2) & set3
         let union = &set1 | &set2;
         let result = &union & &set3;
-        
+
         // Should be empty as set3 is disjoint from union of set1 and set2
         assert!(result.is_empty());
     }
@@ -294,15 +280,15 @@ mod tests {
         let id1 = create_test_id_with_any_t(2, 1, 1, 0);
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
         let id3 = create_test_id_with_any_t(2, 3, 3, 2);
-        
+
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
         let set3 = SpaceTimeIdSet::from(id3);
-        
+
         // Test: set1 & (set2 | set3) == (set1 & set2) | (set1 & set3)
         let left_side = &set1 & &(&set2 | &set3);
         let right_side = &(&set1 & &set2) | &(&set1 & &set3);
-        
+
         // Both should be empty in this case as sets are disjoint
         assert!(left_side.is_empty());
         assert!(right_side.is_empty());
@@ -312,18 +298,18 @@ mod tests {
     fn test_spacetime_idset_de_morgan_laws() {
         let id1 = create_test_id_with_any_t(2, 1, 1, 0);
         let id2 = create_test_id_with_any_t(2, 2, 2, 1);
-        
+
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         // Test De Morgan's law: !(set1 | set2) == (!set1) & (!set2)
         let union = &set1 | &set2;
         let not_union = !union;
-        
+
         let not_set1 = !&set1;
         let not_set2 = !&set2;
         let and_of_nots = &not_set1 & &not_set2;
-        
+
         // The results should be equivalent (though exact comparison might be complex)
         // This is more of a behavioral test than exact equality
     }
@@ -331,32 +317,18 @@ mod tests {
     // Edge cases with ranges
     #[test]
     fn test_spacetime_idset_operations_with_ranges() {
-        let id1 = SpaceTimeId::new(
-            2,
-            LimitRange(0, 1),
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        ).unwrap();
-        
-        let id2 = SpaceTimeId::new(
-            2,
-            LimitRange(1, 2),
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        ).unwrap();
-        
+        let id1 = SpaceTimeId::new(2, LimitRange(0, 1), Single(1), Single(0), 0, Any).unwrap();
+
+        let id2 = SpaceTimeId::new(2, LimitRange(1, 2), Single(1), Single(0), 0, Any).unwrap();
+
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         // Test operations with overlapping ranges
         let intersection = &set1 & &set2;
         let union = &set1 | &set2;
         let xor = &set1 ^ &set2;
-        
+
         // Intersection should contain the overlap
         // Union should contain both ranges (possibly merged)
         // XOR should contain non-overlapping parts
@@ -364,31 +336,17 @@ mod tests {
 
     #[test]
     fn test_spacetime_idset_operations_with_any_dimensions() {
-        let id1 = SpaceTimeId::new(
-            2,
-            Any,
-            Single(1),
-            Single(0),
-            0,
-            Any,
-        ).unwrap();
-        
-        let id2 = SpaceTimeId::new(
-            2,
-            Single(1),
-            Any,
-            Single(0),
-            0,
-            Any,
-        ).unwrap();
-        
+        let id1 = SpaceTimeId::new(2, Any, Single(1), Single(0), 0, Any).unwrap();
+
+        let id2 = SpaceTimeId::new(2, Single(1), Any, Single(0), 0, Any).unwrap();
+
         let set1 = SpaceTimeIdSet::from(id1);
         let set2 = SpaceTimeIdSet::from(id2);
-        
+
         // Test operations with Any dimensions
         let intersection = &set1 & &set2;
         let union = &set1 | &set2;
-        
+
         // Should handle Any dimensions correctly
         assert!(!intersection.is_empty()); // Should have intersection
         assert!(!union.is_empty()); // Should have union

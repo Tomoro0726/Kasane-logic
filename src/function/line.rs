@@ -8,7 +8,7 @@ use crate::{
 use std::collections::HashSet;
 
 /// a と b の間の voxel 線分を返す
-pub fn line(z: u16, a: Point, b: Point) -> SpaceTimeIdSet {
+pub fn line(z: u8, a: Point, b: Point) -> SpaceTimeIdSet {
     let steps = 50_000;
     let mut voxels_set = SpaceTimeIdSet::new();
 

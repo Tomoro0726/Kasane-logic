@@ -1,7 +1,7 @@
 use crate::id::{DimensionRange, SpaceTimeId, coordinates::Point};
 
 /// Point (lat, lon, alt) を SpaceTimeId に変換
-pub fn point_to_id(z: u16, point: Point) -> SpaceTimeId {
+pub fn point_to_id(z: u8, point: Point) -> SpaceTimeId {
     let lat = point.latitude;
     let lon = point.longitude;
     let alt = point.altitude;

@@ -1,5 +1,5 @@
-use crate::id::{DimensionRange, SpaceTimeId};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::{DimensionRange, SpaceTimeId};
 
 impl SpaceTimeId {
     /// Returns the F dimension (vertical/altitude) value.
@@ -102,7 +102,7 @@ impl SpaceTimeId {
     /// let zoom_level = stid.z();
     /// assert_eq!(zoom_level, 4);
     /// ```
-    pub fn z(&self) -> u16 {
+    pub fn z(&self) -> u8 {
         self.z
     }
 

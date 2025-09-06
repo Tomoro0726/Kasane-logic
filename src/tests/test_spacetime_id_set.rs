@@ -1,5 +1,5 @@
-use crate::id::SpaceTimeId;
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+use crate::id::SpaceTimeId;
 use crate::set::SpaceTimeIdSet;
 
 #[cfg(test)]
@@ -7,28 +7,12 @@ mod tests {
     use super::*;
 
     // Helper function to create a simple SpaceTimeId for testing
-    fn create_test_id(z: u16, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            i,
-            Single(t),
-        )
-        .unwrap()
+    fn create_test_id(z: u8, x: u32, y: u32, f: i32, i: u32, t: u32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), i, Single(t)).unwrap()
     }
 
-    fn create_test_id_with_any_t(z: u16, x: u32, y: u32, f: i32) -> SpaceTimeId {
-        SpaceTimeId::new(
-            z,
-            Single(f),
-            Single(x),
-            Single(y),
-            0,
-            Any,
-        )
-        .unwrap()
+    fn create_test_id_with_any_t(z: u8, x: u32, y: u32, f: i32) -> SpaceTimeId {
+        SpaceTimeId::new(z, Single(f), Single(x), Single(y), 0, Any).unwrap()
     }
 
     // Tests for SpaceTimeIdSet::new()
@@ -287,26 +271,10 @@ mod tests {
         let mut set = SpaceTimeIdSet::new();
 
         // Insert a range
-        let id1 = SpaceTimeId::new(
-            2,
-            Single(0),
-            LimitRange(0, 2),
-            Single(1),
-            0,
-            Any,
-        )
-        .unwrap();
+        let id1 = SpaceTimeId::new(2, Single(0), LimitRange(0, 2), Single(1), 0, Any).unwrap();
 
         // Insert an overlapping range
-        let id2 = SpaceTimeId::new(
-            2,
-            Single(0),
-            LimitRange(1, 3),
-            Single(1),
-            0,
-            Any,
-        )
-        .unwrap();
+        let id2 = SpaceTimeId::new(2, Single(0), LimitRange(1, 3), Single(1), 0, Any).unwrap();
 
         set.insert(id1);
         set.insert(id2);
@@ -320,26 +288,10 @@ mod tests {
         let mut set = SpaceTimeIdSet::new();
 
         // Insert a larger range
-        let id1 = SpaceTimeId::new(
-            3,
-            Single(0),
-            LimitRange(0, 7),
-            Single(1),
-            0,
-            Any,
-        )
-        .unwrap();
+        let id1 = SpaceTimeId::new(3, Single(0), LimitRange(0, 7), Single(1), 0, Any).unwrap();
 
         // Insert a smaller contained range
-        let id2 = SpaceTimeId::new(
-            3,
-            Single(0),
-            LimitRange(2, 4),
-            Single(1),
-            0,
-            Any,
-        )
-        .unwrap();
+        let id2 = SpaceTimeId::new(3, Single(0), LimitRange(2, 4), Single(1), 0, Any).unwrap();
 
         set.insert(id1);
         set.insert(id2);
@@ -352,15 +304,7 @@ mod tests {
     fn test_spacetime_idset_insert_any_dimension() {
         let mut set = SpaceTimeIdSet::new();
 
-        let id = SpaceTimeId::new(
-            2,
-            Any,
-            Any,
-            Any,
-            0,
-            Any,
-        )
-        .unwrap();
+        let id = SpaceTimeId::new(2, Any, Any, Any, 0, Any).unwrap();
 
         set.insert(id);
         assert_eq!(set.iter().count(), 1);

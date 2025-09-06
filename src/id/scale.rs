@@ -33,7 +33,7 @@ impl SpaceTimeId {
     /// - `i` is less than the current time level
     /// - Internal coefficient conversion fails
 
-    pub fn scale(&self, z: Option<u16>, i: Option<u32>) -> Result<Self, String> {
+    pub fn scale(&self, z: Option<u8>, i: Option<u32>) -> Result<Self, String> {
         if z.is_none() && i.is_none() {
             return Ok(self.clone());
         }

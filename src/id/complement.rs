@@ -214,7 +214,7 @@ impl SpaceTimeId {
     }
 
     /// Inverts a spatial dimension range (x or y) for complement calculation.
-    fn split_xy_dimension(dim_range: &DimensionRange<u32>, z: u16) -> Vec<DimensionRange<u32>> {
+    fn split_xy_dimension(dim_range: &DimensionRange<u32>, z: u8) -> Vec<DimensionRange<u32>> {
         let max = (1u32 << z) - 1;
         match dim_range {
             Single(v) => {
@@ -255,7 +255,7 @@ impl SpaceTimeId {
     }
 
     /// Inverts a vertical dimension range (f) for complement calculation.
-    fn split_f_dimension(dim_range: &DimensionRange<i32>, z: u16) -> Vec<DimensionRange<i32>> {
+    fn split_f_dimension(dim_range: &DimensionRange<i32>, z: u8) -> Vec<DimensionRange<i32>> {
         let max = (1i32 << z) - 1;
         let min = -(1i32 << z);
         match dim_range {
