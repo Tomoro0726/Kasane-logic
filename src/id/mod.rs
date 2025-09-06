@@ -2,6 +2,7 @@ pub mod center;
 pub mod complement;
 pub mod coordinates;
 pub mod pure;
+pub mod range;
 pub mod relation;
 pub mod scale;
 pub mod value;
@@ -30,8 +31,10 @@ pub enum DimensionRange<T> {
     Any,
 }
 
-use DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use std::fmt;
+use DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
+
+use crate::id::range::{F_MAX, F_MIN, XY_MAX};
 
 impl<T> fmt::Display for DimensionRange<T>
 where
@@ -147,205 +150,138 @@ impl SpaceTimeId {
         i: u32,
         t: DimensionRange<u32>,
     ) -> Result<Self, String> {
-        if z >= 31 {
-            return Err(format!(
-                "Zoom level z must be less than 31 to prevent overflow with i32 range. Received: {}.",
-                z
-            ));
+        if z >= 32 {
+            return Err(format!("Zoom level z must be 0..=31. Got {}", z));
         }
 
-        fn validate_xy_dim(
-            dim_val: &DimensionRange<u32>,
-            z: u8,
-        ) -> Result<DimensionRange<u32>, String> {
-            let max = (1u32 << z) - 1;
+        let xy_max = XY_MAX[z as usize];
+        let f_min = F_MIN[z as usize];
+        let f_max = F_MAX[z as usize];
 
-            match *dim_val {
+        fn normalize_xy(
+            dim: &DimensionRange<u32>,
+            xy_max: u32,
+        ) -> Result<DimensionRange<u32>, String> {
+            use DimensionRange::*;
+            match *dim {
                 Single(v) => {
-                    if v <= max {
-                        Ok(Single(v))
-                    } else {
-                        Err(format!(
-                            "value {} is out of bounds for zoom level {}. Must be less than {}.",
-                            v, z, max
-                        ))
+                    if v > xy_max {
+                        return Err(format!("XY value {} > max {}", v, xy_max));
                     }
+                    Ok(Single(v))
                 }
-                LimitRange(start, end) => {
-                    if start > end {
-                        return validate_xy_dim(&LimitRange(end, start), z);
+                LimitRange(s, e) => {
+                    let (s, e) = if s > e { (e, s) } else { (s, e) };
+                    if s == e {
+                        return Ok(Single(s));
                     }
-                    if end == start {
-                        return Ok(Single(start));
+                    if s == 0 && e == xy_max {
+                        return Ok(Any);
                     }
-                    if end <= max {
-                        if start == 0 && end == max {
-                            Ok(Any)
-                        } else if start == 0 {
-                            Ok(BeforeUnLimitRange(end))
-                        } else if end == max {
-                            Ok(AfterUnLimitRange(start))
-                        } else {
-                            Ok(LimitRange(start, end))
-                        }
-                    } else {
-                        Err(format!(
-                            "end value {} is out of bounds for zoom level {}. Must be less than {}.",
-                            end, z, max
-                        ))
+                    if s == 0 {
+                        return Ok(BeforeUnLimitRange(e));
                     }
+                    if e == xy_max {
+                        return Ok(AfterUnLimitRange(s));
+                    }
+                    Ok(LimitRange(s, e))
                 }
                 AfterUnLimitRange(start) => {
-                    if start <= max {
-                        if start == 0 {
-                            Ok(Any)
-                        } else if start == max {
-                            Ok(Single(max))
-                        } else {
-                            Ok(AfterUnLimitRange(start))
-                        }
-                    } else {
-                        Err(format!(
-                            "start value {} is out of bounds for zoom level {}. Must be less than {}.",
-                            start, z, max
-                        ))
-                    }
-                }
-                BeforeUnLimitRange(end) => {
-                    if end <= max {
-                        if end == max {
-                            Ok(Any)
-                        } else if end == 0 {
-                            Ok(Single(0))
-                        } else {
-                            Ok(BeforeUnLimitRange(end))
-                        }
-                    } else {
-                        Err(format!(
-                            "end value {} is out of bounds for zoom level {}. Must be less than {}.",
-                            end, z, max
-                        ))
-                    }
-                }
-                Any => Ok(Any),
-            }
-        }
-
-        fn validate_f_dim(
-            dim_val: &DimensionRange<i32>,
-            z: u8,
-        ) -> Result<DimensionRange<i32>, String> {
-            let limit = 1i32 << z;
-            let max_f = limit - 1;
-            let min_f = -limit;
-
-            match *dim_val {
-                Single(v) => {
-                    if v >= min_f && v <= max_f {
-                        Ok(Single(v))
-                    } else {
-                        Err(format!(
-                            "value {} is out of bounds for zoom level {}. Must be between {} and {}.",
-                            v, z, min_f, max_f
-                        ))
-                    }
-                }
-                LimitRange(start, end) => {
-                    if start > end {
-                        return validate_f_dim(&LimitRange(end, start), z);
-                    }
-                    if end == start {
-                        return Ok(Single(start));
-                    }
-                    if end <= max_f {
-                        if start == min_f && end == max_f {
-                            Ok(Any)
-                        } else if start == min_f {
-                            Ok(BeforeUnLimitRange(end))
-                        } else if end == max_f {
-                            Ok(AfterUnLimitRange(start))
-                        } else {
-                            Ok(LimitRange(start, end))
-                        }
-                    } else {
-                        Err(format!(
-                            "range {}:{} is out of bounds for zoom level {}. Must be within [{}, {}].",
-                            start, end, z, min_f, max_f
-                        ))
-                    }
-                }
-                AfterUnLimitRange(start) => {
-                    if start >= min_f && start <= max_f {
-                        if start == min_f {
-                            Ok(Any)
-                        } else if start == max_f {
-                            Ok(Single(max_f))
-                        } else {
-                            Ok(AfterUnLimitRange(start))
-                        }
-                    } else {
-                        Err(format!(
-                            "start value {} is out of bounds for zoom level {}. Must be between {} and {}.",
-                            start, z, min_f, max_f
-                        ))
-                    }
-                }
-                BeforeUnLimitRange(end) => {
-                    if end >= min_f && end <= max_f {
-                        if end == max_f {
-                            Ok(Any)
-                        } else if end == min_f {
-                            Ok(Single(min_f))
-                        } else {
-                            Ok(BeforeUnLimitRange(end))
-                        }
-                    } else {
-                        Err(format!(
-                            "end value {} is out of bounds for zoom level {}. Must be between {} and {}.",
-                            end, z, min_f, max_f
-                        ))
-                    }
-                }
-                Any => Ok(Any),
-            }
-        }
-
-        fn validate_t_dim(
-            dim_val: &DimensionRange<u32>,
-            i: u32,
-        ) -> Result<DimensionRange<u32>, String> {
-            if i == 0 {
-                if *dim_val != Any {
-                    return Err("t must be Any when time interval i is 0.".to_string());
-                } else {
-                    return Ok(Any);
-                }
-            }
-
-            match *dim_val {
-                Single(_) => Ok(dim_val.clone()),
-
-                LimitRange(start, end) => {
-                    if start > end {
-                        return validate_t_dim(&LimitRange(end, start), i);
-                    }
-                    if start == end {
-                        return Ok(Single(start));
-                    };
                     if start == 0 {
-                        return Ok(BeforeUnLimitRange(end));
+                        Ok(Any)
+                    } else if start == xy_max {
+                        Ok(Single(xy_max))
+                    } else {
+                        Ok(AfterUnLimitRange(start))
                     }
-                    Ok(LimitRange(start, end))
                 }
-
                 BeforeUnLimitRange(end) => {
-                    if end == 0 {
-                        return Ok(Single(0));
+                    if end == xy_max {
+                        Ok(Any)
+                    } else if end == 0 {
+                        Ok(Single(0))
                     } else {
                         Ok(BeforeUnLimitRange(end))
                     }
                 }
+                Any => Ok(Any),
+            }
+        }
 
+        fn normalize_f(
+            dim: &DimensionRange<i32>,
+            f_min: i32,
+            f_max: i32,
+        ) -> Result<DimensionRange<i32>, String> {
+            use DimensionRange::*;
+            match *dim {
+                Single(v) => {
+                    if v < f_min || v > f_max {
+                        return Err(format!(
+                            "F value {} out of bounds [{}..{}]",
+                            v, f_min, f_max
+                        ));
+                    }
+                    Ok(Single(v))
+                }
+                LimitRange(s, e) => {
+                    let (s, e) = if s > e { (e, s) } else { (s, e) };
+                    if s == e {
+                        return Ok(Single(s));
+                    }
+                    if s == f_min && e == f_max {
+                        return Ok(Any);
+                    }
+                    if s == f_min {
+                        return Ok(BeforeUnLimitRange(e));
+                    }
+                    if e == f_max {
+                        return Ok(AfterUnLimitRange(s));
+                    }
+                    Ok(LimitRange(s, e))
+                }
+                AfterUnLimitRange(start) => {
+                    if start == f_min {
+                        Ok(Any)
+                    } else if start == f_max {
+                        Ok(Single(f_max))
+                    } else {
+                        Ok(AfterUnLimitRange(start))
+                    }
+                }
+                BeforeUnLimitRange(end) => {
+                    if end == f_max {
+                        Ok(Any)
+                    } else if end == f_min {
+                        Ok(Single(f_min))
+                    } else {
+                        Ok(BeforeUnLimitRange(end))
+                    }
+                }
+                Any => Ok(Any),
+            }
+        }
+
+        fn normalize_t(dim: &DimensionRange<u32>, i: u32) -> Result<DimensionRange<u32>, String> {
+            use DimensionRange::*;
+            if i == 0 {
+                if *dim != Any {
+                    return Err("t must be Any when i = 0".to_string());
+                }
+                return Ok(Any);
+            }
+            match *dim {
+                Single(_) => Ok(*dim),
+                LimitRange(s, e) => {
+                    let (s, e) = if s > e { (e, s) } else { (s, e) };
+                    if s == e {
+                        Ok(Single(s))
+                    } else if s == 0 {
+                        Ok(BeforeUnLimitRange(e))
+                    } else {
+                        Ok(LimitRange(s, e))
+                    }
+                }
                 AfterUnLimitRange(start) => {
                     if start == 0 {
                         Ok(Any)
@@ -353,18 +289,24 @@ impl SpaceTimeId {
                         Ok(AfterUnLimitRange(start))
                     }
                 }
-
+                BeforeUnLimitRange(end) => {
+                    if end == 0 {
+                        Ok(Single(0))
+                    } else {
+                        Ok(BeforeUnLimitRange(end))
+                    }
+                }
                 Any => Ok(Any),
             }
         }
 
         Ok(Self {
             z,
-            f: validate_f_dim(&f, z).map_err(|e| format!("Invalid f dimension: {}", e))?,
-            x: validate_xy_dim(&x, z).map_err(|e| format!("Invalid x dimension: {}", e))?,
-            y: validate_xy_dim(&y, z).map_err(|e| format!("Invalid y dimension: {}", e))?,
+            x: normalize_xy(&x, xy_max)?,
+            y: normalize_xy(&y, xy_max)?,
+            f: normalize_f(&f, f_min, f_max)?,
             i,
-            t: validate_t_dim(&t, i).map_err(|e| format!("Invalid t dimension: {}", e))?,
+            t: normalize_t(&t, i)?,
         })
     }
 }

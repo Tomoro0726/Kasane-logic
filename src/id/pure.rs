@@ -1,34 +1,34 @@
+use crate::id::range::{F_MAX, F_MIN, XY_MAX};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::id::{DimensionRange, SpaceTimeId};
 
 impl SpaceTimeId {
     /// Expands all dimension ranges into individual `SpaceTimeId` instances with single values only.
-    /// 
+    ///
     /// This method converts extended notation (Range, Before, After, Any) into a collection of
     /// pure space-time IDs where each dimension uses only `Single` variants. This is useful
     /// for processing operations that require discrete, individual space-time cells.
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// A `Vec<SpaceTimeId>` containing all individual IDs that represent the same space-time
     /// region as the original ID, but with each dimension expanded to single values.
-    /// 
+    ///
     /// # Note
-    /// 
+    ///
     /// The T dimension is preserved as-is and not expanded, maintaining the original temporal range.
-    /// 
+    ///
     /// # Japanese Note
-    /// 
+    ///
     /// 拡張記法 (Range, Before, After, Any) をすべて展開して
     /// 各次元が Single だけの純粋な ID 群を返す
     pub fn pure(&self) -> Vec<SpaceTimeId> {
         let z = self.z();
         let i = self.i();
 
-        let max_xy = (1u32 << z) - 1;
-
-        let max_f = (1i32 << z) - 1;
-        let min_f = -(1i32 << z);
+        let max_xy = XY_MAX[z as usize];
+        let max_f = F_MAX[z as usize];
+        let min_f = F_MIN[z as usize];
 
         let expand_u32 = |range: &DimensionRange<u32>, max: u32| -> Vec<u32> {
             match range {

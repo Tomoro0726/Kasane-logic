@@ -1,6 +1,6 @@
 use crate::{
     function::tools::{
-        ECEF, ecef_to_point::ecef_to_point, point_to_ecef::point_to_ecef, point_to_id::point_to_id,
+        ecef_to_point::ecef_to_point, point_to_ecef::point_to_ecef, point_to_id::point_to_id, ECEF,
     },
     id::coordinates::Point,
     set::SpaceTimeIdSet,
@@ -8,7 +8,7 @@ use crate::{
 
 /// 並列版 (ネイティブ: full feature)
 #[cfg(feature = "full")]
-pub fn triangle(z: u16, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
+pub fn triangle(z: u8, a: Point, b: Point, c: Point) -> SpaceTimeIdSet {
     println!("Triangle Start");
     let start = Instant::now();
 

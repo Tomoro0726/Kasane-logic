@@ -1,37 +1,37 @@
-use kasane_logic::{
-    function::{
-        line::line,
-        tools::{
-            ECEF,
-            ecef_to_point::ecef_to_point,
-            point_to_ecef::{self},
-        },
-        triangle::triangle,
-    },
-    id::{DimensionRange, SpaceTimeId, coordinates::Point},
-    set::SpaceTimeIdSet,
-};
-use std::io::{BufWriter, Write};
-use std::{fs::File, time::Instant};
+use std::ops::{Add, BitAnd, Shl, Shr, Sub};
+
+fn intervals_and_values_f(n: u8, start: i32, end: i32) -> Vec<((i32, i32), bool)> {
+    let step = 1 << n; // 2^n
+    let mut intervals = Vec::new();
+
+    let mut current = start;
+    let mut b = (start >> n) << n;
+    if b < start {
+        b += step;
+    }
+
+    while current <= end {
+        // saturating_sub でオーバーフロー防止
+        let next = b.saturating_sub(1);
+        let interval_end = if next > end { end } else { next };
+        let value = ((current >> n) & 1) == 0;
+        intervals.push(((current, interval_end), value));
+
+        current = b;
+        b = b.saturating_add(step); // u32 と i32 両方で安全
+    }
+
+    intervals
+}
 
 fn main() {
-    let a = Point {
-        latitude: 35.6809591,
-        longitude: 139.7673068,
-        altitude: 1000.0,
-    };
+    let n = 3;
 
-    let b = Point {
-        latitude: 30.6291112,
-        longitude: 138.7389313,
-        altitude: 100.0,
-    };
+    // u32 の場合
+    let result_u32 = intervals_and_values_f(n, 3, 3);
+    println!("\nu32:");
 
-    let c = Point {
-        latitude: 35.2291112,
-        longitude: 139.7089313,
-        altitude: 10000.0,
-    };
-
-    let result = triangle(15, a, b, c);
+    for ((s, e), val) in result_u32 {
+        println!("x = {}..{} => {}", s, e, val);
+    }
 }

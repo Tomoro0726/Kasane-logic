@@ -23,6 +23,7 @@ pub mod xor;
     feature = "serde_support",
     derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)
 )]
+
 pub struct SpaceTimeIdSet {
     inner: Vec<SpaceTimeId>,
 }
