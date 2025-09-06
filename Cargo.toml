@@ -24,3 +24,9 @@ criterion = { version = "0.7", features = ["html_reports"] }
 name="id_new"
 harness = false
 
+
+[profile.dev]
+overflow-checks = false  # これが有効だとオーバーフローでパニックする
+
+[profile.release]
+overflow-checks = false # リリースビルドでは通常無効

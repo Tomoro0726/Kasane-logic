@@ -1,5 +1,3 @@
-use std::process::id;
-
 use crate::id::z_range::{F_MAX, F_MIN, XY_MAX};
 use crate::id::DimensionRange::{
     self, AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single,
@@ -7,8 +5,9 @@ use crate::id::DimensionRange::{
 use crate::id::SpaceTimeId;
 
 #[derive(Debug)]
-struct SpaceTimeIdMap<T> {
-    inner: Inner<T>,
+pub struct SpaceTimeIdMap<T> {
+    up_inner: Inner<T>,
+    down_inner: Inner<T>,
 }
 
 #[derive(Debug)]
@@ -23,36 +22,135 @@ pub struct Children<T> {
     pub nodes: Vec<Box<SpaceTimeIdMap<T>>>, // 存在する子だけ格納
 }
 
-impl<T: Default> SpaceTimeIdMap<T> {
-    fn new() -> Self {
+impl<T: Default + Clone> SpaceTimeIdMap<T> {
+    pub fn new() -> Self {
         Self {
-            inner: Inner::Children(Children {
+            up_inner: Inner::Children(Children {
+                mask: 0,
+                nodes: Vec::new(),
+            }),
+            down_inner: Inner::Children(Children {
                 mask: 0,
                 nodes: Vec::new(),
             }),
         }
     }
-
-    fn insert(&mut self, id: SpaceTimeId, v: T) -> Result<(), String> {
-        //IDが0の場合
+    pub fn insert(&mut self, id: SpaceTimeId, v: T) -> Result<(), String> {
         if id.z() == 0 {
-            match &self.inner {
-                //z=0がvalueを持っている場合
+            match &mut self.up_inner {
                 Inner::Value(_) => return Err("既にZ=0はValueを持っています".to_string()),
                 Inner::Children(children) => {
-                    //Childrenがいない場合は問題なし
-                    //問題はChildrenがいる場合
+                    if children.mask == 0 {
+                        self.up_inner = Inner::Value(v);
+                        return Ok(());
+                    } else {
+                        return Err("既にZ=0はそれ以下のZoomLevelでValueを持っています".to_string());
+                    }
                 }
             }
         }
 
-        Self::insert_innner(self, id, v, 0)
+        Self::insert_innner(&mut self.up_inner, id, v, 1)
     }
 
-    fn insert_innner(&mut self, id: SpaceTimeId, v: T, top_z: u8) -> Result<(), String> {
-        //まずIDの状態を判定する
-        let ids = split_id(id, top_z);
-        for id in ids {}
+    fn insert_innner(o: &mut Inner<T>, id: SpaceTimeId, v: T, top_z: u8) -> Result<(), String> {
+        // 目的の深さに到達した場合
+        if top_z == id.z() {
+            match o {
+                Inner::Value(_) => {
+                    return Err(format!("既にZ={}はValueを持っています", top_z));
+                }
+                Inner::Children(children) => {
+                    if children.mask != 0 {
+                        return Err(format!(
+                            "既にZ={}はそれ以下のZoomLevelでValueを持っています",
+                            top_z
+                        ));
+                    }
+                    *o = Inner::Value(v);
+                    return Ok(());
+                }
+            }
+        }
+
+        // まだ目的の深さに到達していない場合
+        match o {
+            Inner::Value(_) => {
+                return Err(format!("既にZ={}はValueを持っています", top_z));
+            }
+            Inner::Children(children) => {
+                // 現在の深さでのIDの分割を取得
+                let ids = split_id(id, top_z);
+
+                // 各子ノードに対して処理
+                for (child_id, child_mask) in ids {
+                    // child_maskに対応する子ノードの位置を探す
+                    let child_pos = Self::find_child_position(children, child_mask);
+
+                    match child_pos {
+                        Some(pos) => {
+                            // 既存の子ノードがある場合、再帰的に挿入
+                            let child_node = &mut children.nodes[pos];
+                            Self::insert_innner(
+                                &mut child_node.up_inner,
+                                id,
+                                v.clone(),
+                                top_z + 1,
+                            )?;
+                        }
+                        None => {
+                            // 新しい子ノードを作成
+                            let mut new_map = SpaceTimeIdMap::new();
+                            Self::insert_innner(&mut new_map.up_inner, id, v.clone(), top_z + 1)?;
+
+                            // 子ノードを正しい位置に挿入
+                            Self::insert_child_node(children, new_map, child_mask);
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    // 子ノードの位置を見つけるヘルパー関数（修正版）
+    fn find_child_position(children: &Children<T>, target_mask: u8) -> Option<usize> {
+        // target_maskが存在するかチェック
+        let target_bit = 1u8 << target_mask;
+        if children.mask & target_bit == 0 {
+            return None; // 存在しない
+        }
+
+        // target_maskより小さいビットが立っている数を数える（これが配列インデックス）
+        let mut position = 0;
+        for i in 0..target_mask {
+            let bit = 1u8 << i;
+            if children.mask & bit != 0 {
+                position += 1;
+            }
+        }
+
+        Some(position)
+    }
+
+    // 子ノードを正しい位置に挿入するヘルパー関数（修正版）
+    fn insert_child_node(children: &mut Children<T>, new_node: SpaceTimeIdMap<T>, child_mask: u8) {
+        // child_maskより小さいビットが立っている数を計算（挿入位置）
+        let mut insert_pos = 0;
+        for i in 0..child_mask {
+            let bit = 1u8 << i;
+            if children.mask & bit != 0 {
+                insert_pos += 1;
+            }
+        }
+
+        // ノードを挿入
+        children.nodes.insert(insert_pos, Box::new(new_node));
+
+        // maskを更新
+        let target_bit = 1u8 << child_mask;
+        children.mask |= target_bit;
     }
 }
 
@@ -67,12 +165,10 @@ fn split_id(id: SpaceTimeId, top_z: u8) -> Vec<(SpaceTimeId, u8)> {
 
     //Trueの場合は0
     //Falseの場合は1
-    let f_intervals: Vec<((i32, i32), bool)> =
-        intervals_until_boundary_f(top_z - id.z(), f_start, f_end);
-    let x_intervals: Vec<((u32, u32), bool)> =
-        intervals_until_boundary_xy(top_z - id.z(), x_start, x_end);
-    let y_intervals: Vec<((u32, u32), bool)> =
-        intervals_until_boundary_xy(top_z - id.z(), y_start, y_end);
+    let f_intervals = intervals_until_boundary_f(top_z - id.z(), f_start, f_end);
+
+    let x_intervals = intervals_until_boundary_xy(top_z - id.z(), x_start, x_end);
+    let y_intervals = intervals_until_boundary_xy(top_z - id.z(), y_start, y_end);
 
     //u8はOcTreeの位置
     let mut result = Vec::new();
@@ -133,35 +229,51 @@ fn dimension_range_to_bounds_f(dim: &DimensionRange<i32>, z: u8) -> (i32, i32) {
 
 //境界のデータを作成する
 fn intervals_until_boundary_f(n: u8, start: i32, end: i32) -> Vec<((i32, i32), bool)> {
-    let step = 1 << n;
+    let step: u64 = 1u64 << n;
     let mut result = Vec::new();
 
-    let mut current = start;
-    let mut b = (start >> n) << n;
-    if b < start {
-        b += step;
+    // オフセットして u64 に変換
+    let offset = i64::from(i32::MIN);
+    let start_u = (i64::from(start) - offset) as u64;
+    let end_u = (i64::from(end) - offset) as u64;
+
+    let mut current = start_u;
+    let mut b = (start_u >> n) << n;
+    if b < start_u {
+        b = b.saturating_add(step);
     }
 
-    while current <= end {
+    while current <= end_u {
         let next = b.saturating_sub(1);
-        let interval_end = if next > end { end } else { next };
+        let interval_end = if next > end_u { end_u } else { next };
         let value = ((current >> n) & 1) == 0;
 
-        result.push(((current, interval_end), value));
+        result.push((
+            (
+                (current as i64 + offset) as i32,
+                (interval_end as i64 + offset) as i32,
+            ),
+            value,
+        ));
 
         current = b;
         b = b.saturating_add(step);
 
-        // 境界は1つだけなので、見つけたらストップ
-        if current <= end {
+        if current <= end_u {
             let next_value = ((current >> n) & 1) == 0;
             if next_value != value {
-                let next_interval_end = if b.saturating_sub(1) > end {
-                    end
+                let next_interval_end = if b.saturating_sub(1) > end_u {
+                    end_u
                 } else {
                     b.saturating_sub(1)
                 };
-                result.push(((current, next_interval_end), next_value));
+                result.push((
+                    (
+                        (current as i64 + offset) as i32,
+                        (next_interval_end as i64 + offset) as i32,
+                    ),
+                    next_value,
+                ));
                 break;
             }
         }
@@ -171,7 +283,7 @@ fn intervals_until_boundary_f(n: u8, start: i32, end: i32) -> Vec<((i32, i32), b
 }
 
 fn intervals_until_boundary_xy(n: u8, start: u32, end: u32) -> Vec<((u32, u32), bool)> {
-    let step = 1 << n;
+    let step: u32 = 1u32 << n; // safe
     let mut result = Vec::new();
 
     let mut current = start;
@@ -190,7 +302,6 @@ fn intervals_until_boundary_xy(n: u8, start: u32, end: u32) -> Vec<((u32, u32), 
         current = b;
         b = b.saturating_add(step);
 
-        // 境界は1つだけなので、見つけたらストップ
         if current <= end {
             let next_value = ((current >> n) & 1) == 0;
             if next_value != value {
