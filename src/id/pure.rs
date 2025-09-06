@@ -1,4 +1,4 @@
-use crate::id::range::{F_MAX, F_MIN, XY_MAX};
+use crate::id::z_range::{F_MAX, F_MIN, XY_MAX};
 use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 use crate::id::{DimensionRange, SpaceTimeId};
 

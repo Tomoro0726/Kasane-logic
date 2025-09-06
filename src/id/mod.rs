@@ -2,12 +2,12 @@ pub mod center;
 pub mod complement;
 pub mod coordinates;
 pub mod pure;
-pub mod range;
 pub mod relation;
 pub mod scale;
 pub mod value;
 pub mod vertex;
 pub mod with;
+pub mod z_range;
 
 /// Represents a value for a single dimension (F, X, Y, or T) in a SpaceTimeId.
 ///
@@ -34,7 +34,7 @@ pub enum DimensionRange<T> {
 use std::fmt;
 use DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single};
 
-use crate::id::range::{F_MAX, F_MIN, XY_MAX};
+use crate::id::z_range::{F_MAX, F_MIN, XY_MAX};
 
 impl<T> fmt::Display for DimensionRange<T>
 where

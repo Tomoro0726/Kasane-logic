@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::{
     id::{
-        range::{F_MAX, F_MIN, XY_MAX},
+        z_range::{F_MAX, F_MIN, XY_MAX},
         DimensionRange::{self, AfterUnLimitRange, Any, BeforeUnLimitRange, LimitRange, Single},
         SpaceTimeId,
     },
