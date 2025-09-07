@@ -17,13 +17,14 @@ impl<T: Default + Clone> SpaceTimeIdMap<T> {
     }
 
     fn collect_recursive(&self, inner: &Inner<T>, acc: &mut Vec<(SpaceTimeId, T)>, top_z: u8) {
-        match inner {
-            Inner::Value(v) => {
-                let id = SpaceTimeId::new(top_z, f, x, y, 0, DimensionRange::Any).unwrap();
+        // match inner {
+        //     Inner::Value(v) => {
+        //         let id = SpaceTimeId::new(top_z, f, x, y, 0, DimensionRange::Any).unwrap();
 
-                acc.push((id, v.clone()));
-            }
-            Inner::Children(children) => for (i, child) in children.nodes.iter().enumerate() {},
-        }
+        //         acc.push((id, v.clone()));
+        //     }
+        //     Inner::Children(children) => for (i, child) in children.nodes.iter().enumerate() {},
+        // }
+        todo!()
     }
 }

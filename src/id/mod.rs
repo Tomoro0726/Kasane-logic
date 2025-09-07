@@ -172,6 +172,9 @@ impl SpaceTimeId {
                 }
                 LimitRange(s, e) => {
                     let (s, e) = if s > e { (e, s) } else { (s, e) };
+                    if e > xy_max {
+                        return Err(format!("XY range end {} > max {}", e, xy_max));
+                    }
                     if s == e {
                         return Ok(Single(s));
                     }
@@ -187,6 +190,9 @@ impl SpaceTimeId {
                     Ok(LimitRange(s, e))
                 }
                 AfterUnLimitRange(start) => {
+                    if start > xy_max {
+                        return Err(format!("XY start {} > max {}", start, xy_max));
+                    }
                     if start == 0 {
                         Ok(Any)
                     } else if start == xy_max {
@@ -196,6 +202,9 @@ impl SpaceTimeId {
                     }
                 }
                 BeforeUnLimitRange(end) => {
+                    if end > xy_max {
+                        return Err(format!("XY end {} > max {}", end, xy_max));
+                    }
                     if end == xy_max {
                         Ok(Any)
                     } else if end == 0 {
@@ -226,6 +235,12 @@ impl SpaceTimeId {
                 }
                 LimitRange(s, e) => {
                     let (s, e) = if s > e { (e, s) } else { (s, e) };
+                    if s < f_min || e > f_max {
+                        return Err(format!(
+                            "F range {}..{} out of bounds [{}..{}]",
+                            s, e, f_min, f_max
+                        ));
+                    }
                     if s == e {
                         return Ok(Single(s));
                     }
@@ -241,6 +256,12 @@ impl SpaceTimeId {
                     Ok(LimitRange(s, e))
                 }
                 AfterUnLimitRange(start) => {
+                    if start < f_min || start > f_max {
+                        return Err(format!(
+                            "F start {} out of bounds [{}..{}]",
+                            start, f_min, f_max
+                        ));
+                    }
                     if start == f_min {
                         Ok(Any)
                     } else if start == f_max {
@@ -250,6 +271,12 @@ impl SpaceTimeId {
                     }
                 }
                 BeforeUnLimitRange(end) => {
+                    if end < f_min || end > f_max {
+                        return Err(format!(
+                            "F end {} out of bounds [{}..{}]",
+                            end, f_min, f_max
+                        ));
+                    }
                     if end == f_max {
                         Ok(Any)
                     } else if end == f_min {

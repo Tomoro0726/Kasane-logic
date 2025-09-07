@@ -36,9 +36,9 @@ pub const XY_MAX: [u32; 32] = [
 
 /// F dimension min for each zoom level z (0..=31)
 pub const F_MIN: [i32; 32] = [
-    0,  // z=0 => -2^0
-    -2, // z=1 => -2^1
-    -4, // z=2 => -2^2
+    -1,
+    -2,
+    -4,
     -8,
     -16,
     -32,
@@ -67,7 +67,7 @@ pub const F_MIN: [i32; 32] = [
     -268435456,
     -536870912,
     -1073741824,
-    -2147483648,
+    i32::MIN,
 ];
 
 /// F dimension max for each zoom level z (0..=31)

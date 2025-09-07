@@ -1,20 +1,20 @@
-use kasane_logic::id::DimensionRange::{self, Single};
-use kasane_logic::{id::SpaceTimeId, map::SpaceTimeIdMap};
+use std::collections::{HashMap, HashSet};
 
 fn main() {
-    let id = SpaceTimeId::new(
-        10,
-        DimensionRange::LimitRange(3, 10),
-        Single(1),
-        Single(1),
-        0,
-        DimensionRange::Any,
-    )
-    .unwrap();
+    // HashSet example
+    let mut animals: HashSet<&str> = HashSet::new();
+    animals.insert("cat");
+    animals.insert("dog");
+    animals.insert("cat"); // duplicate ignored
+    println!("Set: {:?}", animals);
 
-    let mut map = SpaceTimeIdMap::new();
+    // HashMap example
+    let mut fruits: HashMap<&str, i32> = HashMap::new();
+    fruits.insert("apple", 3);
+    fruits.insert("banana", 5);
+    println!("Map: {:?}", fruits);
 
-    let _ = map.insert(id, "猫".to_string());
-
-    println!("{:?}", map);
+    if let Some(count) = fruits.get("apple") {
+        println!("Apples: {}", count);
+    }
 }

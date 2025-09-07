@@ -9,7 +9,6 @@ use crate::id::DimensionRange::{AfterUnLimitRange, Any, BeforeUnLimitRange, Limi
 impl<T: Default + Clone> SpaceTimeIdMap<T> {
     pub fn insert(&mut self, id: SpaceTimeId, v: T) -> Result<(), String> {
         //Todo:上下の判定と挿入の場合分けの関数を作成
-        //Zの自動的な昇格
         if id.z() == 0 {
             match &mut self.up_inner {
                 Inner::Value(_) => return Err("既にZ=0はValueを持っています".to_string()),
@@ -139,10 +138,15 @@ fn split_id(id: SpaceTimeId, top_z: u8) -> Vec<(SpaceTimeId, u8)> {
 
     //Trueの場合は0
     //Falseの場合は1
-    let f_intervals = intervals_until_boundary_f(top_z - id.z(), f_start, f_end);
+    let depth = id.z() - top_z; // 下のレベルとの差分
+    let f_intervals = intervals_until_boundary_f(depth, f_start, f_end);
+    let x_intervals = intervals_until_boundary_xy(depth, x_start, x_end);
+    let y_intervals = intervals_until_boundary_xy(depth, y_start, y_end);
 
-    let x_intervals = intervals_until_boundary_xy(top_z - id.z(), x_start, x_end);
-    let y_intervals = intervals_until_boundary_xy(top_z - id.z(), y_start, y_end);
+    println!("split_id(z={}, top_z={}, depth={})", id.z(), top_z, depth);
+    println!("  f: {}..{} => {:?}", f_start, f_end, f_intervals);
+    println!("  x: {}..{} => {:?}", x_start, x_end, x_intervals);
+    println!("  y: {}..{} => {:?}", y_start, y_end, y_intervals);
 
     //u8はOcTreeの位置
     let mut result = Vec::new();
@@ -172,9 +176,10 @@ fn split_id(id: SpaceTimeId, top_z: u8) -> Vec<(SpaceTimeId, u8)> {
 }
 
 fn flags_to_mask(f_flag: bool, x_flag: bool, y_flag: bool) -> u8 {
-    let f_bit = if f_flag { 0 } else { 1 } << 2; // bit 2
-    let x_bit = if x_flag { 0 } else { 1 } << 1; // bit 1
-    let y_bit = if y_flag { 0 } else { 1 } << 0; // bit 0
+    let f_bit = (if f_flag { 0 } else { 1 }) << 2;
+    let x_bit = (if x_flag { 0 } else { 1 }) << 1;
+    let y_bit = (if y_flag { 0 } else { 1 }) << 0;
+
     f_bit | x_bit | y_bit
 }
 
